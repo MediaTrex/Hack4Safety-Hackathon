@@ -23,7 +23,7 @@ export default function CustomTabBarCitizen({ state, descriptors, navigation }) 
             >
                 <Ionicons
                     name={icons[routeName]}
-                    size={24}
+                    size={26}
                     color={focused ? "#2458E8" : "#9CA3AF"}
                 />
 
@@ -46,7 +46,7 @@ export default function CustomTabBarCitizen({ state, descriptors, navigation }) 
     return (
         <View className="absolute left-2 right-2 bottom-4">
             <View
-                className="h-[75px] bg-white rounded-[28px] flex-row items-center"
+                className="h-18.75 bg-white rounded-[28px] flex-row items-center"
                 style={{
                     shadowColor: "#000",
                     shadowOffset: { width: 0, height: 4 },
@@ -62,7 +62,7 @@ export default function CustomTabBarCitizen({ state, descriptors, navigation }) 
                 </View>
 
                 {/* SPACE FOR SOS */}
-                <View className="w-[90px]" />
+                <View className="w-22.5" />
 
                 {/* RIGHT SIDE */}
                 <View className="flex-1 flex-row">
@@ -75,14 +75,14 @@ export default function CustomTabBarCitizen({ state, descriptors, navigation }) 
                     className="absolute items-center"
                     style={{
                         left: "50%",
-                        marginLeft: -36,
+                        marginLeft: -33,
                         top: -18,
                     }}
                 >
                     <View className="absolute w-22.5 h-22.5 rounded-full bg-white" />
 
                     <TouchableOpacity
-                        className="w-[72px] h-[72px] rounded-full bg-red-500 items-center justify-center border-[5px] border-white"
+                        className="w-18 h-18 rounded-full bg-red-500 items-center justify-center border-[5px] border-white"
                         onPress={() => navigation.navigate("sos")}
                     >
                         <Text className="text-white font-bold">SOS</Text>

@@ -23,8 +23,9 @@ export const AuthProvider = ({ children }) => {
         });
     }
 
-    function logoutCitizen() {
+    async function logoutCitizen() {
         setUser(null);
+        await AsyncStorage.removeItem("user");
     }
 
     return (

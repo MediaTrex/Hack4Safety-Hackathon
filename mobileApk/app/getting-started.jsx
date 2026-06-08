@@ -32,7 +32,7 @@ export default function GetStarted() {
             {/* Features */}
             <View className="mt-2.5">
                 <View className="flex-row mb-5 items-center">
-                    <View className="w-13.75 h-13.75 rounded-full bg-[#EAF2FF] justify-center items-center mr-[12px]">
+                    <View className="w-13.75 h-13.75 rounded-full bg-[#EAF2FF] justify-center items-center mr-3">
                         <Ionicons name="people" size={32} color="#1E6BFF" />
                     </View>
 
@@ -47,7 +47,7 @@ export default function GetStarted() {
                 </View>
 
                 <View className="flex-row mb-5 items-center">
-                    <View className="w-13.75 h-13.75 rounded-full bg-[#EAF2FF] justify-center items-center mr-[12px]">
+                    <View className="w-13.75 h-13.75 rounded-full bg-[#EAF2FF] justify-center items-center mr-3">
                         <Ionicons name="flash" size={32} color="#1E6BFF" />
                     </View>
 
@@ -62,7 +62,7 @@ export default function GetStarted() {
                 </View>
 
                 <View className="flex-row mb-5 items-center">
-                    <View className="w-13.75 h-13.75 rounded-full bg-[#EAF2FF] justify-center items-center mr-[12px]">
+                    <View className="w-13.75 h-13.75 rounded-full bg-[#EAF2FF] justify-center items-center mr-3">
                         <Ionicons name="shield" size={32} color="#1E6BFF" />
                     </View>
 

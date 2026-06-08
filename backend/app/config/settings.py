@@ -39,9 +39,19 @@ class Settings(BaseSettings):
     COOKIE_HTTPONLY: bool = True
     COOKIE_SAMESITE: str = "lax"
 
+    # SMTP (Google)
+    SMTP_HOST: str
+    SMTP_PORT: int = 587
+    SMTP_USER: str
+    SMTP_PASSWORD: str
+
+    # OTP
+    OTP_TTL_MINUTES: int = 10
+
     # AI/ML
     YOLO_MODEL: str = "yolov8n.pt"
     CONFIDENCE_THRESHOLD: float = 0.5
+
     
     DENSITY_LOW: int = 30
     DENSITY_MEDIUM: int = 60

@@ -32,9 +32,13 @@ app.add_middleware(
 )
 
 # Include routes
+from app.routes.auth_routes import router as auth_router
+
+app.include_router(auth_router)
 
 
 @app.get("/")
+
 async def root():
     """Root endpoint"""
     return {

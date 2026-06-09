@@ -138,6 +138,7 @@ export default function HomeScreen() {
                                         />
                                     }
                                     label="Emergency Contacts"
+                                    link='/(citizens)/helpline'
                                 />
                             </View>
                         </View>

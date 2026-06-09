@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaEllipsisV } from "react-icons/fa";
+import { FaEllipsisV, FaEye } from "react-icons/fa";
 
 function Operations() {
   const [ops, setOps] = useState([
@@ -9,26 +9,28 @@ function Operations() {
       location: "Butwal",
       team: "Unit 3",
       status: "In Progress",
-      time: "10:20",
+      time: "10:20 AM",
+    },
+    {
+      id: "OP-002",
+      type: "Accident Response",
+      location: "Bhairahawa",
+      team: "Unit 2",
+      status: "Assigned",
+      time: "09:45 AM",
     },
   ]);
 
   const [search, setSearch] = useState("");
 
-  const [status, setStatus] = useState("");
-
-  const [type, setType] = useState("");
-
-  const [show, setShow] = useState(false);
-
   const addOperation = () => {
     setOps([
       ...ops,
       {
-        id: "OP-" + Date.now(),
+        id: `OP-${ops.length + 1}`.padStart(6, "0"),
         type: "New Operation",
         location: "Kathmandu",
-        team: "Unit",
+        team: "Unit 5",
         status: "Assigned",
         time: "Now",
       },
@@ -40,103 +42,112 @@ function Operations() {
   );
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between">
-        <div>
-          <h1 className="text-4xl font-bold">Operations</h1>
+    <div className="space-y-5">
+      {/* Header */}
+      <div>
+        <h1 className="text-2xl font-semibold text-gray-800">Operations</h1>
 
-          <p className="text-gray-500">Track operations</p>
-        </div>
-
-        <button onClick={() => alert("Bell")}>
-          <FaBell />
-        </button>
+        <p className="text-sm text-gray-500">
+          Track and manage active rescue operations
+        </p>
       </div>
 
-      <div className="flex gap-4 my-6">
+      {/* Filters */}
+      <div className="flex flex-wrap gap-3">
         <input
-          placeholder="Search operation"
-          className="border p-3 rounded-xl"
+          type="text"
+          placeholder="Search operation..."
+          value={search}
           onChange={(e) => setSearch(e.target.value)}
+          className="h-10 px-4 border rounded-lg text-sm"
         />
 
-        <select
-          className="border p-3 rounded-xl"
-          onChange={(e) => setStatus(e.target.value)}
-        >
+        <select className="h-10 px-4 border rounded-lg text-sm">
           <option>All Status</option>
-
           <option>Assigned</option>
-
           <option>In Progress</option>
+          <option>Completed</option>
         </select>
 
-        <select
-          className="border p-3 rounded-xl"
-          onChange={(e) => setType(e.target.value)}
-        >
+        <select className="h-10 px-4 border rounded-lg text-sm">
           <option>All Types</option>
-
-          <option>Flood</option>
-
-          <option>Rescue</option>
+          <option>Flood Rescue</option>
+          <option>Accident Response</option>
+          <option>Medical Emergency</option>
         </select>
 
         <button
           onClick={addOperation}
-          className="bg-blue-600 text-white px-5 rounded-xl"
+          className="h-10 px-5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm"
         >
           + Create Operation
         </button>
       </div>
 
-      <table className="w-full bg-white rounded-xl shadow">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Type</th>
-            <th>Location</th>
-            <th>Team</th>
-            <th>Status</th>
-            <th>Time</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {filtered.map((o) => (
-            <tr key={o.id} className="text-center h-16 border-b">
-              <td>{o.id}</td>
-
-              <td>{o.type}</td>
-
-              <td>{o.location}</td>
-
-              <td>{o.team}</td>
-
-              <td>
-                <span className="bg-blue-100 px-3 py-1 rounded">
-                  {o.status}
-                </span>
-              </td>
-
-              <td>{o.time}</td>
-
-              <td>
-                <div className="flex justify-center gap-3">
-                  <button onClick={() => alert("View")}>
-                    <FaEye />
-                  </button>
-
-                  <button onClick={() => alert("More")}>
-                    <FaEllipsisV />
-                  </button>
-                </div>
-              </td>
+      {/* Table */}
+      <div className="bg-white border rounded-xl overflow-hidden">
+        <table className="w-full">
+          <thead className="bg-gray-50">
+            <tr className="text-sm text-gray-700">
+              <th className="p-4 text-left">ID</th>
+              <th className="text-left">Type</th>
+              <th className="text-left">Location</th>
+              <th className="text-left">Team</th>
+              <th className="text-left">Status</th>
+              <th className="text-left">Updated</th>
+              <th className="text-center">Action</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+
+          <tbody>
+            {filtered.map((o) => (
+              <tr key={o.id} className="border-t hover:bg-gray-50 transition">
+                <td className="p-4 font-medium text-blue-600">{o.id}</td>
+
+                <td>{o.type}</td>
+
+                <td>{o.location}</td>
+
+                <td>{o.team}</td>
+
+                <td>
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs ${
+                      o.status === "In Progress"
+                        ? "bg-blue-100 text-blue-700"
+                        : "bg-yellow-100 text-yellow-700"
+                    }`}
+                  >
+                    {o.status}
+                  </span>
+                </td>
+
+                <td>{o.time}</td>
+
+                <td>
+                  <div className="flex justify-center gap-4">
+                    <button onClick={() => alert(`Viewing ${o.id}`)}>
+                      <FaEye className="text-blue-600" />
+                    </button>
+
+                    <button onClick={() => alert(`More options for ${o.id}`)}>
+                      <FaEllipsisV className="text-gray-600" />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+
+            {filtered.length === 0 && (
+              <tr>
+                <td colSpan="7" className="p-8 text-center text-gray-500">
+                  No operations found
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

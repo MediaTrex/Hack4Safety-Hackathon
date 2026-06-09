@@ -22,7 +22,8 @@
     "react-native-reanimated": "4.3.1",
     "react-native-safe-area-context": "~5.7.0",
     "react-native-screens": "4.25.2",
-    "expo-audio": "~56.0.11"
+    "expo-audio": "~56.0.11",
+    "expo-file-system": "~56.0.7"
   },
   "scripts": {
     "start": "expo start",

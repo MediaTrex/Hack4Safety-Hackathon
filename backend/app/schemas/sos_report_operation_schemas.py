@@ -11,6 +11,7 @@ class GeoJSONPoint(BaseModel):
 
 class SOSCreateRequest(BaseModel):
     location: GeoJSONPoint
+    address: str = Field(..., min_lenght=1, max_length=120)
     emergency_type: str = Field(..., min_length=1, max_length=120)
     mobile_no: str = Field(..., min_length=6, max_length=30)
     additional_details: Optional[str] = Field(None, max_length=2000)
@@ -18,12 +19,14 @@ class SOSCreateRequest(BaseModel):
 
 # Overall operation state
 OperationStatus = Literal[
+    "not_assign",
     "assigned",
     "completed",
 ]
 
 # Workflow/progress state
 TaskStatus = Literal[
+    "not_assign",
     "assigned",
     "on_the_way",
     "reached",
@@ -58,6 +61,8 @@ class ReportCreateRequest(BaseModel):
 
 class OperationReadResponse(BaseModel):
     id: str = Field(..., alias="_id")
+    
+    operation_id: str
 
     sos_id: str
     assignId: Optional[str]
@@ -73,6 +78,8 @@ class OperationReadResponse(BaseModel):
 
 
 class OperationCreateInternal(BaseModel):
+    operation_id: str
+     
     sos_id: str
     assignId: Optional[str] = None
 
@@ -80,7 +87,7 @@ class OperationCreateInternal(BaseModel):
     rescue_team_location: Optional[Any] = None
 
     # Overall state
-    status: OperationStatus = "assigned"
+    status: OperationStatus = "not_assign"
 
     # Progress state
-    taskStatus: TaskStatus = "assigned"
+    taskStatus: TaskStatus = "not_assign"

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from app.utils.generate_operation_id import generate_operation_id
 from bson import ObjectId
 
 from datetime import datetime, timezone
@@ -15,9 +16,6 @@ from app.schemas.sos_report_operation_schemas import (
 )
 
 
-
-
-
 def _utcnow() -> datetime:
     return datetime.now(timezone.utc)
 
@@ -28,26 +26,33 @@ async def create_sos(payload: SOSCreateRequest) -> str:
 
     sos_doc: Dict[str, Any] = {
         "location": payload.location.model_dump(),
+        "address": payload.address,
         "emergency_type": payload.emergency_type,
         "mobile_no": payload.mobile_no,
         "additional_details": payload.additional_details,
+        # priority is placeholder (later filled by AI model)
+        "priority": "high",
         # status is driven by operation.taskStatus
-        "status": "assigned",
+        "status": "not_assign",
         "created_at": _utcnow(),
         "updated_at": _utcnow(),
     }
 
 
+
     res = await sos_col.insert_one(sos_doc)
     sos_id = str(res.inserted_id)
+    
+    operation_id = await generate_operation_id()
 
     op: OperationCreateInternal = OperationCreateInternal(
+        operation_id=operation_id,
         sos_id=sos_id,
         assignId=None,
         sos_location=payload.location.model_dump(),
         rescue_team_location=None,
-        status="assigned",
-        taskStatus="assigned",
+        status="not_assign",
+        taskStatus="not_assign",
     )
 
     # Ensure indexes exist for faster retrieval at scale.
@@ -59,6 +64,7 @@ async def create_sos(payload: SOSCreateRequest) -> str:
 
     await operations_col.insert_one(
         {
+            "operation_id": op.operation_id,
             "sos_id": op.sos_id,
             "assignId": op.assignId,
             "sos_location": op.sos_location,
@@ -111,72 +117,21 @@ async def list_operations(limit: int = 50) -> list[dict]:
     return out
 
 
-# async def update_operation_task_status(operation_id: str, payload) -> bool:
+async def list_sos(limit: int = 50) -> list[dict]:
+    sos_col = await get_collection("sos")
 
-#     """When operation.taskStatus updates, keep SOS.status in sync.
+    cursor = (
+        sos_col.find({})
+        .sort("created_at", -1)
+        .limit(limit)
+    )
 
-#     Rule:
-#     - SOS.status mirrors Operation.taskStatus
-#     - If taskStatus becomes 'completed', delete the SOS.
-#     """
-#     operations_col = await get_collection("operations")
-#     sos_col = await get_collection("sos")
+    out: list[dict] = []
+    async for doc in cursor:
+        doc["_id"] = str(doc["_id"])
+        out.append(doc)
 
-#     now = _utcnow()
-
-#     op_doc = await operations_col.find_one({"_id": operation_id})
-#     if not op_doc:
-#         # try ObjectId
-#         try:
-#             from bson import ObjectId
-
-#             op_doc = await operations_col.find_one({"_id": ObjectId(operation_id)})
-#         except Exception:
-#             op_doc = None
-
-#     if not op_doc:
-#         return False
-
-#     new_task_status = payload.taskStatus
-
-#     new_operation_status: str = (
-#         "completed"
-#         if new_task_status == "completed"
-#         else "assigned"
-#     )
-
-#     await operations_col.update_one(
-#         {"_id": op_doc["_id"]},
-#         {
-#             "$set": {
-#                 "taskStatus": new_task_status,
-#                 "status": new_operation_status,
-#                 "updated_at": now,
-#             }
-#         },
-#     )
-
-
-#     # Sync SOS.status to operation.taskStatus
-#     sos_id = op_doc.get("sos_id")
-
-#     if sos_id:
-#         sos_object_id = ObjectId(sos_id)
-
-#         await sos_col.update_one(
-#             {"_id": sos_object_id},
-#             {
-#             "$set": {
-#                 "status": new_operation_status,
-#                 "updated_at": now,
-#             },
-#         },
-#     )
-
-#     if new_task_status == "completed":
-#         await sos_col.delete_one({"_id": sos_object_id})
-
-#     return True
+    return out
 
 async def update_operation_task_status(operation_id: str, payload) -> bool:
     """
@@ -212,11 +167,12 @@ async def update_operation_task_status(operation_id: str, payload) -> bool:
     new_task_status = payload.taskStatus
 
     # Overall operation status
-    new_operation_status = (
-        "completed"
-        if new_task_status == "completed"
-        else "assigned"
-    )
+    if new_task_status == "completed":
+        new_operation_status = "completed"
+    elif new_task_status == "not_assign":
+        new_operation_status = "not_assign"
+    else:
+        new_operation_status = "assigned"
 
     # Update operation
     await operations_col.update_one(

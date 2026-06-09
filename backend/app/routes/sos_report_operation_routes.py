@@ -9,13 +9,17 @@ from app.schemas.sos_report_operation_schemas import (
 
 
 
+
 from app.services.sos_report_operation_service import (
+
     create_report,
     create_sos,
     get_operation,
     list_operations,
+    list_sos,
     update_operation_task_status,
 )
+
 
 
 router = APIRouter(tags=["sos / report / operation"])
@@ -25,6 +29,13 @@ router = APIRouter(tags=["sos / report / operation"])
 async def create_sos_endpoint(payload: SOSCreateRequest):
     sos_id = await create_sos(payload)
     return {"message": "SOS created", "sos_id": sos_id}
+
+
+@router.get("/get-sos")
+async def get_sos(limit: int = 50):
+    sos_list = await list_sos(limit=limit)
+    return [s for s in sos_list]
+
 
 
 @router.post("/reports")

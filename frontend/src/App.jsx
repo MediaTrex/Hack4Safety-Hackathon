@@ -39,6 +39,9 @@ import Incidents from "./pages/Incidents";
 import SOSAlerts from "./pages/SOSAlerts";
 import RescueTeams from "./pages/RescueTeams";
 import Operations from "./pages/Operations";
+import Heatmaps from "./pages/Heatmaps";
+import CrowdAnalytics from "./pages/CrowdAnalytics";
+
 
 function App() {
   return (
@@ -56,6 +59,10 @@ function App() {
           <Route path="/rescue-teams" element={<RescueTeams />} />
 
           <Route path="/operations" element={<Operations />} />
+
+          <Route path="/heatmaps" element={<Heatmaps />} />
+
+          <Route path="/crowd-analytics" element={<CrowdAnalytics />} />
         </Route>
       </Routes>
     </BrowserRouter>

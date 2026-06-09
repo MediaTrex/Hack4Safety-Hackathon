@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useState, useRef, useEffect } from "react";
+import { Linking, Platform } from "react-native";
+import { useState, useRef, useEffect, useCallback } from "react";
 import {
     View,
     Text,
@@ -12,6 +13,8 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ScreenWrapper from "../../../components/ScreenWrapper";
+import { useAppContext } from "../../../context/AppContext";
+import { useFocusEffect } from "expo-router";
 // ── Emergency types config ────────────────────────────────────────────────────
 const EMERGENCY_TYPES = [
     { label: "Flood", icon: "🌊" },
@@ -70,16 +73,52 @@ function PulseRing({ delay = 0 }) {
 
 // ── Main screen ───────────────────────────────────────────────────────────────
 export default function SOSScreen({ navigation }) {
+    let {
+        latitude,
+        longitude,
+        address,
+        accuracy,
+        permissionStatus,
+        isLoading,
+        error,
+        requestPermission,
+    } = useAppContext();
+
+    function openAppSettings() {
+        if (Platform.OS === "ios") {
+            Linking.openURL("app-settings:"); // iOS opens app settings directly
+        } else {
+            Linking.openSettings(); // Android opens app settings
+        }
+    }
+
+    useFocusEffect(
+        useCallback(() => {
+            if (
+                permissionStatus === "undetermined" ||
+                permissionStatus === "denied"
+            ) {
+                requestPermission();
+            }
+            // cleanup if needed
+            return () => {};
+        }, [permissionStatus, requestPermission]),
+    );
+
+    if (permissionStatus === "denied") {
+        openAppSettings();
+    }
+
     const [formData, setFormData] = useState({
         emergencyType: "Flood",
         phoneNumber: "",
         details: "",
         location: {
-            city: "Butwal",
-            region: "Rupandehi",
-            lat: 28.4379,
-            lng: 83.4533,
-            accuracy: 6,
+            city: address.city,
+            region: address.region,
+            lat: latitude,
+            lng: longitude,
+            accuracy,
         },
     });
 
@@ -90,18 +129,19 @@ export default function SOSScreen({ navigation }) {
     };
 
     const handleSend = async () => {
+        //request for permission if not granted
+        if (
+            permissionStatus === "undetermined" ||
+            permissionStatus === "denied"
+        )
+            requestPermission();
+
         if (!formData.emergencyType) {
             Alert.alert("Select emergency type", "Pick an emergency type.");
             return;
         }
         setSending(true);
         try {
-            // 🔌 Replace with your real API call:
-            // await fetch("https://your-api.com/sos", {
-            //   method: "POST",
-            //   headers: { "Content-Type": "application/json" },
-            //   body: JSON.stringify(formData),
-            // });
             await new Promise((r) => setTimeout(r, 1200));
             Alert.alert(
                 "✅ Alert Sent",
@@ -194,13 +234,21 @@ export default function SOSScreen({ navigation }) {
                                 Your Location
                             </Text>
                             <Text className="text-2xl font-bold text-gray-900">
-                                {location.city}, {location.region}
+                                {location.city || "---"},{" "}
+                                {location.region || "---"}
                             </Text>
                             <Text className="text-[16px] text-gray-700 mt-0.5">
-                                {location.lat}° N, {location.lng}° E
+                                {Math.ceil(location.lat * 10000) / 10000 ||
+                                    "---"}
+                                ° N,{" "}
+                                {Math.ceil(location.lng * 10000) / 10000 ||
+                                    "---"}
+                                ° E
                             </Text>
                             <Text className="text-[15px] text-green-600 font-semibold mt-1">
-                                📡 Accuracy: {location.accuracy} m
+                                📡 Accuracy:{" "}
+                                {Math.ceil(location.accuracy * 10) / 10 || "0"}{" "}
+                                m
                             </Text>
                         </View>
                     </View>
@@ -217,7 +265,7 @@ export default function SOSScreen({ navigation }) {
                                     key={label}
                                     onPress={() => selectType(label)}
                                     activeOpacity={0.75}
-                                    className={`items-center justify-center px-3 py-2.5 rounded-xl border-2 min-w-16 relative ${
+                                    className={`items-center justify-center px-2 flex-1 py-2.5 rounded-xl border-2 min-w-16 relative ${
                                         selected
                                             ? "border-blue-600 bg-blue-50"
                                             : "border-gray-200 bg-gray-50"

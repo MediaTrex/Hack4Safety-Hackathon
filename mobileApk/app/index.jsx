@@ -7,16 +7,19 @@ import { useAuth } from "../context/AuthContext";
 export default function Home() {
     let { saveUser, user } = useAuth();
 
+    
     const checkStart = async () => {
         const hasLaunched = await AsyncStorage.getItem("hasLaunched");
         if (hasLaunched === null) {
             router.replace("/getting-started");
         }
     };
-    checkStart();
-
-    if(user?.role === "citizen") router.replace("/(citizens)/home");
-    if(user?.role === "rescuers") router.replace("/(rescuers)/dashboard");
+    
+    useEffect(()=>{
+        checkStart();
+        if(user?.role === "citizen") router.replace("/(citizens)/home");
+        if(user?.role === "rescuers") router.replace("/(rescuers)/dashboard");
+    }, [user]);
 
     return (
         <View className="bg-white p-4 flex-1">

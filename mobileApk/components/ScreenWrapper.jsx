@@ -1,14 +1,14 @@
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import {
+    SafeAreaView,
+    useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import { View } from "react-native";
 import { Keyboard } from "react-native";
 import { useEffect, useState } from "react";
 
 const TAB_BAR_HEIGHT = 75;
 
-export default function ScreenWrapper({
-    children,
-    className = "",
-}) {
+export default function ScreenWrapper({ children, className = "" }) {
     const insets = useSafeAreaInsets();
 
     const [keyboardVisible, setKeyboardVisible] = useState(false);
@@ -30,15 +30,17 @@ export default function ScreenWrapper({
     const bottomPadding = TAB_BAR_HEIGHT + insets.bottom;
 
     return (
-        <View
-            style={{
-                flex: 1,
-                paddingBottom: keyboardVisible
-                    ? 0
-                    : TAB_BAR_HEIGHT + insets.bottom,
-            }}
-        >
-            {children}
-        </View>
+        <SafeAreaView style={{ flex: 1 , backgroundColor:'white'}}>
+            <View
+                style={{
+                    flex: 1,
+                    paddingBottom: keyboardVisible
+                        ? 0
+                        : TAB_BAR_HEIGHT + insets.bottom,
+                }}
+            >
+                {children}
+            </View>
+        </SafeAreaView>
     );
 }

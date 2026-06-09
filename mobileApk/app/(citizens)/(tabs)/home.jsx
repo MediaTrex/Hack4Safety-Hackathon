@@ -15,7 +15,7 @@ export default function HomeScreen() {
     return (
         <View className="flex-1 bg-white">
             {/* Header */}
-            <View className="px-5 pt-14">
+            <View className="px-5 pt-4">
                 <View className="flex-row items-center justify-end">
                     <View className="flex-row items-center gap-4">
                         <TouchableOpacity

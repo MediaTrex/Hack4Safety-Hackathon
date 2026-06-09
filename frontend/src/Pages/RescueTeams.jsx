@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaBell, FaEye, FaEllipsisV, FaFilter } from "react-icons/fa";
+import {FaEllipsisV, FaFilter } from "react-icons/fa";
 
 function RescueTeams() {
   const [teams, setTeams] = useState([

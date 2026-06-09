@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaBell, FaEye, FaEllipsisV } from "react-icons/fa";
+import { FaEllipsisV } from "react-icons/fa";
 
 function Operations() {
   const [ops, setOps] = useState([

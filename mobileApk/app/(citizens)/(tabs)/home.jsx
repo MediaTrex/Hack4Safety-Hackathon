@@ -104,6 +104,7 @@ export default function HomeScreen() {
                                         />
                                     }
                                     label="Report Incident"
+                                    link='/(citizens)/report-incident'
                                 />
 
                                 <QuickAction
@@ -219,11 +220,12 @@ export default function HomeScreen() {
     );
 }
 
-function QuickAction({ icon, label }) {
+function QuickAction({ icon, label , link}) {
     return (
         <TouchableOpacity
             className="w-[22%] items-center border border-gray-200 rounded-2xl p-3 gap-2"
             activeOpacity={0.7}
+            onPress={() => router.push(link)}
         >
             <View className=" items-center justify-center">{icon}</View>
 

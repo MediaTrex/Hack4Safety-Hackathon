@@ -119,7 +119,6 @@ export function AppProvider({ children }) {
         requestPermission();
     }, []);
 
-    console.log(state);
     
 
     return (

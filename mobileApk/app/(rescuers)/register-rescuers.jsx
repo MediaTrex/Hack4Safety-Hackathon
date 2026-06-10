@@ -286,174 +286,8 @@ function Step1({ onNext, onBack, savedData }) {
     );
 }
 
-// ─── STEP 2: OTP Verification ─────────────────────────────────────────────────
-function Step2({ onNext, onBack, email }) {
-    const [otp, setOtp] = useState(["", "", "", "", "", ""]);
-    const [otpError, setOtpError] = useState("");
-    const [timer, setTimer] = useState(45);
-    const inputs = useRef([]);
-
-    // Countdown timer
-    useEffect(() => {
-        if (timer <= 0) return;
-        const id = setInterval(() => setTimer((t) => t - 1), 1000);
-        return () => clearInterval(id);
-    }, [timer]);
-
-    const handleOtpChange = (text, index) => {
-        const cleaned = text.replace(/[^0-9]/g, "").slice(-1);
-        const newOtp = [...otp];
-        newOtp[index] = cleaned;
-        setOtp(newOtp);
-        setOtpError("");
-        if (cleaned && index < 5) inputs.current[index + 1]?.focus();
-    };
-
-    const handleKeyPress = (e, index) => {
-        if (e.nativeEvent.key === "Backspace" && !otp[index] && index > 0) {
-            inputs.current[index - 1]?.focus();
-        }
-    };
-
-    const handleVerify = () => {
-        const code = otp.join("");
-        if (code.length < 6) {
-            setOtpError("Please enter the complete 6-digit OTP");
-            return;
-        }
-        onNext();
-    };
-
-
-    const formatTime = (s) =>
-        `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
-
-    return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
-            <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
-            <ScrollView
-                contentContainerStyle={{ flexGrow: 1 }}
-                keyboardShouldPersistTaps="handled"
-                showsVerticalScrollIndicator={false}
-            >
-                {/* Back → Step 1 */}
-                <TouchableOpacity
-                    onPress={onBack}
-                    className="mt-3 ml-4 w-9 h-9 items-center justify-center rounded-full bg-gray-100"
-                >
-                    <Ionicons name="chevron-back" size={20} color="#374151" />
-                </TouchableOpacity>
-
-                <View className="flex-1 px-6 pt-2">
-                    <Text className="text-3xl font-bold text-center text-gray-900 mb-1">
-                        Verify Your Number
-                    </Text>
-                    <Text className="text-sm text-center text-gray-500 mb-2">
-                        Step 2 of 3
-                    </Text>
-
-                    <StepIndicator currentStep={2} />
-
-                    {/* Illustration */}
-                    <View className="items-center mb-6">
-                        <View className="w-24 h-24 rounded-full bg-blue-50 items-center justify-center">
-                            <MaterialCommunityIcons
-                                name="message-text-outline"
-                                size={44}
-                                color="#3B82F6"
-                            />
-                            <View className="absolute bottom-1 right-1 w-7 h-7 rounded-full bg-green-500 items-center justify-center border-2 border-white">
-                                <Ionicons
-                                    name="checkmark"
-                                    size={14}
-                                    color="white"
-                                />
-                            </View>
-                        </View>
-                    </View>
-
-                    <Text className="text-[15px] text-center text-gray-600 mb-1">
-                        We have sent a 6-digit OTP to
-                    </Text>
-                    <Text className="text-base text-center text-blue-600 mb-6">
-                        {email}
-                    </Text>
-
-                    <Text className="text-sm font-medium text-gray-700 mb-3">
-                        Enter OTP
-                    </Text>
-
-                    {/* OTP Boxes */}
-                    <View className="flex-row justify-between mb-2 w-full">
-                        {otp.map((digit, index) => (
-                            <TextInput
-                                key={index}
-                                ref={(ref) => (inputs.current[index] = ref)}
-                                className={`border rounded-xl text-xl font-bold text-gray-800 ${
-                                    otpError
-                                        ? "border-red-400 bg-red-50"
-                                        : digit
-                                          ? "border-blue-500 bg-blue-50"
-                                          : "border-gray-200 bg-gray-50"
-                                }`}
-                                style={{
-                                    width: (SCREEN_WIDTH - 64) / 6 - 6,
-                                    height: 56,
-                                    textAlign: "center",
-                                }}
-                                value={digit}
-                                onChangeText={(text) =>
-                                    handleOtpChange(text, index)
-                                }
-                                onKeyPress={(e) => handleKeyPress(e, index)}
-                                keyboardType="number-pad"
-                                maxLength={1}
-                                selectTextOnFocus
-                            />
-                        ))}
-                    </View>
-
-                    {otpError ? (
-                        <Text className="text-xs text-red-500 mb-3 ml-1">
-                            {otpError}
-                        </Text>
-                    ) : null}
-
-                    {/* Resend */}
-                    <View className="flex-row justify-center mb-8 mt-2">
-                        {timer > 0 ? (
-                            <Text className="text-sm text-gray-500">
-                                Resend OTP in{" "}
-                                <Text className="font-semibold text-gray-700">
-                                    {formatTime(timer)}
-                                </Text>
-                            </Text>
-                        ) : (
-                            <TouchableOpacity onPress={() => setTimer(45)}>
-                                <Text className="text-sm font-semibold text-blue-600">
-                                    Resend OTP
-                                </Text>
-                            </TouchableOpacity>
-                        )}
-                    </View>
-
-                    <TouchableOpacity
-                        onPress={handleVerify}
-                        className="bg-blue-600 rounded-xl h-14 items-center justify-center mb-6 w-full"
-                        activeOpacity={0.85}
-                    >
-                        <Text className="text-white font-semibold text-base">
-                            Next
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-            </ScrollView>
-        </SafeAreaView>
-    );
-}
-
-// ─── STEP 3: Set Password ─────────────────────────────────────────────────────
-function Step3({ onNext, onBack, savedData }) {
+// ─── STEP 2: Set Password ─────────────────────────────────────────────────────
+function Step2({ onNext, onBack, savedData }) {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
 
@@ -500,7 +334,7 @@ function Step3({ onNext, onBack, savedData }) {
                     keyboardShouldPersistTaps="handled"
                     showsVerticalScrollIndicator={false}
                 >
-                    {/* Back → Step 2 */}
+                    {/* Back → Step 3 */}
                     <TouchableOpacity
                         onPress={onBack}
                         className="mt-3 ml-4 w-9 h-9 items-center justify-center rounded-full bg-gray-100"
@@ -517,10 +351,10 @@ function Step3({ onNext, onBack, savedData }) {
                             Set Your Password
                         </Text>
                         <Text className="text-sm text-center text-gray-500 mb-2">
-                            Step 3 of 3
+                            Step 2 of 3
                         </Text>
 
-                        <StepIndicator currentStep={3} />
+                        <StepIndicator currentStep={2} />
 
                         {/* Password */}
                         <Controller
@@ -626,17 +460,182 @@ function Step3({ onNext, onBack, savedData }) {
                         </View>
 
                         <TouchableOpacity
-                            onPress={()=> handleSubmit(onNext)()}
+                            onPress={() => handleSubmit(onNext)()}
                             className="bg-blue-600 rounded-xl h-14 items-center justify-center mb-6 w-full"
                             activeOpacity={0.85}
                         >
                             <Text className="text-white font-semibold text-base">
-                                Create Account
+                                Set Password
                             </Text>
                         </TouchableOpacity>
                     </View>
                 </ScrollView>
             </KeyboardAvoidingView>
+        </SafeAreaView>
+    );
+}
+
+// ─── STEP 3: OTP Verification ─────────────────────────────────────────────────
+function Step3({ onNext, onBack, email }) {
+    const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+    const [otpError, setOtpError] = useState("");
+    const [timer, setTimer] = useState(45);
+    const inputs = useRef([]);
+
+    // Countdown timer
+    useEffect(() => {
+        if (timer <= 0) return;
+        const id = setInterval(() => setTimer((t) => t - 1), 1000);
+        return () => clearInterval(id);
+    }, [timer]);
+
+    const handleOtpChange = (text, index) => {
+        const cleaned = text.replace(/[^0-9]/g, "").slice(-1);
+        const newOtp = [...otp];
+        newOtp[index] = cleaned;
+        setOtp(newOtp);
+        setOtpError("");
+        if (cleaned && index < 5) inputs.current[index + 1]?.focus();
+    };
+
+    const handleKeyPress = (e, index) => {
+        if (e.nativeEvent.key === "Backspace" && !otp[index] && index > 0) {
+            inputs.current[index - 1]?.focus();
+        }
+    };
+
+    const handleVerify = () => {
+        const code = otp.join("");
+        if (code.length < 6) {
+            setOtpError("Please enter the complete 6-digit OTP");
+            return;
+        }
+        onNext();
+    };
+
+    const formatTime = (s) =>
+        `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
+
+    return (
+        <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+            <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
+            <ScrollView
+                contentContainerStyle={{ flexGrow: 1 }}
+                keyboardShouldPersistTaps="handled"
+                showsVerticalScrollIndicator={false}
+            >
+                {/* Back → Step 1 */}
+                <TouchableOpacity
+                    onPress={onBack}
+                    className="mt-3 ml-4 w-9 h-9 items-center justify-center rounded-full bg-gray-100"
+                >
+                    <Ionicons name="chevron-back" size={20} color="#374151" />
+                </TouchableOpacity>
+
+                <View className="flex-1 px-6 pt-2">
+                    <Text className="text-3xl font-bold text-center text-gray-900 mb-1">
+                        Verify Your Number
+                    </Text>
+                    <Text className="text-sm text-center text-gray-500 mb-2">
+                        Step 3 of 3
+                    </Text>
+
+                    <StepIndicator currentStep={3} />
+
+                    {/* Illustration */}
+                    <View className="items-center mb-6">
+                        <View className="w-24 h-24 rounded-full bg-blue-50 items-center justify-center">
+                            <MaterialCommunityIcons
+                                name="message-text-outline"
+                                size={44}
+                                color="#3B82F6"
+                            />
+                            <View className="absolute bottom-1 right-1 w-7 h-7 rounded-full bg-green-500 items-center justify-center border-2 border-white">
+                                <Ionicons
+                                    name="checkmark"
+                                    size={14}
+                                    color="white"
+                                />
+                            </View>
+                        </View>
+                    </View>
+
+                    <Text className="text-sm text-center text-gray-600 mb-1">
+                        We have sent a 6-digit OTP to
+                    </Text>
+                    <Text className="text-base font-semibold text-center text-blue-600 mb-6">
+                        {email}
+                    </Text>
+
+                    <Text className="text-sm font-medium text-gray-700 mb-3">
+                        Enter OTP
+                    </Text>
+
+                    {/* OTP Boxes */}
+                    <View className="flex-row justify-between mb-2 w-full">
+                        {otp.map((digit, index) => (
+                            <TextInput
+                                key={index}
+                                ref={(ref) => (inputs.current[index] = ref)}
+                                className={`border rounded-xl text-xl font-bold text-gray-800 ${
+                                    otpError
+                                        ? "border-red-400 bg-red-50"
+                                        : digit
+                                          ? "border-blue-500 bg-blue-50"
+                                          : "border-gray-200 bg-gray-50"
+                                }`}
+                                style={{
+                                    width: (SCREEN_WIDTH - 64) / 6 - 6,
+                                    height: 56,
+                                    textAlign: "center",
+                                }}
+                                value={digit}
+                                onChangeText={(text) =>
+                                    handleOtpChange(text, index)
+                                }
+                                onKeyPress={(e) => handleKeyPress(e, index)}
+                                keyboardType="number-pad"
+                                maxLength={1}
+                                selectTextOnFocus
+                            />
+                        ))}
+                    </View>
+
+                    {otpError ? (
+                        <Text className="text-xs text-red-500 mb-3 ml-1">
+                            {otpError}
+                        </Text>
+                    ) : null}
+
+                    {/* Resend */}
+                    <View className="flex-row justify-center mb-8 mt-2">
+                        {timer > 0 ? (
+                            <Text className="text-sm text-gray-500">
+                                Resend OTP in{" "}
+                                <Text className="font-semibold text-gray-700">
+                                    {formatTime(timer)}
+                                </Text>
+                            </Text>
+                        ) : (
+                            <TouchableOpacity onPress={() => setTimer(45)}>
+                                <Text className="text-sm font-semibold text-blue-600">
+                                    Resend OTP
+                                </Text>
+                            </TouchableOpacity>
+                        )}
+                    </View>
+
+                    <TouchableOpacity
+                        onPress={handleVerify}
+                        className="bg-blue-600 rounded-xl h-14 items-center justify-center mb-6 w-full"
+                        activeOpacity={0.85}
+                    >
+                        <Text className="text-white font-semibold text-base">
+                            Create Account
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+            </ScrollView>
         </SafeAreaView>
     );
 }
@@ -729,19 +728,17 @@ export default function SignupScreen() {
     const router = useRouter();
     const [step, setStep] = useState(1);
     const [step1Data, setStep1Data] = useState(null);
-    const [step3Data, setStep3Data] = useState(null);
+    const [step2Data, setStep2Data] = useState(null);
 
     const handleStep1Next = (data) => {
-        console.log("inside step1 next");
         console.log(data);
-        
         setStep1Data(data);
         setStep(2);
     };
 
-    const handleStep2Next = () => setStep(3);
-    const handleStep3Next = (data) => {
-        setStep3Data(data);
+    const handleStep3Next = () => setStep(4);
+    const handleStep2Next = (data) => {
+        setStep2Data(data);
         const payload = {
             fullName: step1Data?.fullName,
             mobileNumber: step1Data?.mobileNumber,
@@ -750,7 +747,7 @@ export default function SignupScreen() {
         };
         console.log("Submitting to backend:", payload);
         // await yourApi.register(payload);
-        setStep(4);
+        setStep(3);
     };
 
     return (
@@ -766,18 +763,22 @@ export default function SignupScreen() {
                 <Step2
                     onNext={handleStep2Next}
                     onBack={() => setStep(1)}
-                    email={step1Data?.email}
+                    savedData={step2Data}
                 />
             )}
             {step === 3 && (
                 <Step3
                     onNext={handleStep3Next}
                     onBack={() => setStep(2)}
-                    savedData={step3Data}
+                    email={step1Data?.email}
                 />
             )}
             {step === 4 && (
-                <SuccessScreen onGoToLogin={() => router.replace("/(rescuers)/login-rescuers")} />
+                <SuccessScreen
+                    onGoToLogin={() =>
+                        router.replace("/(rescuers)/login-rescuers")
+                    }
+                />
             )}
         </>
     );

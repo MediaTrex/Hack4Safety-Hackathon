@@ -12,10 +12,7 @@ export const AuthProvider = ({ children }) => {
         });
     }, []);
 
-    const [user, setUser] = useState({
-        id: "1",
-        role: "citizen",
-    });
+    const [user, setUser] = useState(null);
 
     function saveUser(user) {
         AsyncStorage.setItem("user", JSON.stringify(user)).then(() => {

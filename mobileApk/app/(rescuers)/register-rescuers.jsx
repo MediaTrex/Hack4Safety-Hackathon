@@ -287,7 +287,7 @@ function Step1({ onNext, onBack, savedData }) {
 }
 
 // ─── STEP 2: OTP Verification ─────────────────────────────────────────────────
-function Step2({ onNext, onBack, phoneNumber }) {
+function Step2({ onNext, onBack, email }) {
     const [otp, setOtp] = useState(["", "", "", "", "", ""]);
     const [otpError, setOtpError] = useState("");
     const [timer, setTimer] = useState(45);
@@ -324,10 +324,6 @@ function Step2({ onNext, onBack, phoneNumber }) {
         onNext();
     };
 
-    const maskedPhone = phoneNumber
-        ? phoneNumber.slice(0, 4) +
-          "•".repeat(Math.max(0, phoneNumber.length - 4))
-        : "+977 98••••••••";
 
     const formatTime = (s) =>
         `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
@@ -376,11 +372,11 @@ function Step2({ onNext, onBack, phoneNumber }) {
                         </View>
                     </View>
 
-                    <Text className="text-sm text-center text-gray-600 mb-1">
+                    <Text className="text-[15px] text-center text-gray-600 mb-1">
                         We have sent a 6-digit OTP to
                     </Text>
-                    <Text className="text-base font-semibold text-center text-blue-600 mb-6">
-                        {maskedPhone}
+                    <Text className="text-base text-center text-blue-600 mb-6">
+                        {email}
                     </Text>
 
                     <Text className="text-sm font-medium text-gray-700 mb-3">
@@ -770,7 +766,7 @@ export default function SignupScreen() {
                 <Step2
                     onNext={handleStep2Next}
                     onBack={() => setStep(1)}
-                    phoneNumber={step1Data?.mobileNumber}
+                    email={step1Data?.email}
                 />
             )}
             {step === 3 && (

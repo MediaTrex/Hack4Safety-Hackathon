@@ -50,3 +50,15 @@
 2026-06-10 11:40:02.865 | INFO     | __main__:train_all_models:117 -   priority    : {'clf_f1': np.float64(0.8653), 'reg_rmse': np.float64(0.0331), 'reg_r2': 0.9516, 'time_sec': 17.9}
 2026-06-10 11:40:02.870 | INFO     | __main__:train_all_models:118 -   Total time: 97.0s
 2026-06-10 11:40:02.872 | SUCCESS  | __main__:train_all_models:124 - Metrics saved → logs\training_report.json
+2026-06-10 11:41:53.885 | INFO     | api.prediction_api:startup:49 - Loading AI models...
+2026-06-10 11:41:57.275 | INFO     | models.flood_model:load:190 - Flood model loaded.
+2026-06-10 11:41:57.276 | INFO     | train_pipeline:load_all:162 - Loaded: flood
+2026-06-10 11:41:58.803 | INFO     | models.landslide_model:load:154 - Landslide model loaded.
+2026-06-10 11:41:58.804 | INFO     | train_pipeline:load_all:162 - Loaded: landslide
+2026-06-10 11:41:59.029 | INFO     | models.accident_model:load:182 - Accident model loaded.
+2026-06-10 11:41:59.030 | INFO     | train_pipeline:load_all:162 - Loaded: accident
+2026-06-10 11:41:59.312 | INFO     | models.crowd_model:load:120 - Crowd model loaded.
+2026-06-10 11:41:59.313 | INFO     | train_pipeline:load_all:162 - Loaded: crowd
+2026-06-10 11:42:00.005 | INFO     | models.priority_model:load:209 - Priority model loaded.
+2026-06-10 11:42:00.005 | INFO     | train_pipeline:load_all:162 - Loaded: priority
+2026-06-10 11:42:00.005 | SUCCESS  | api.prediction_api:startup:52 - Models loaded: ['flood', 'landslide', 'accident', 'crowd', 'priority']

@@ -7,6 +7,13 @@ export default function CustomTabBarCitizen({
     descriptors,
     navigation,
 }) {
+    //hide tab on map screen
+    const currentRoute = state.routes[state.index].name;
+
+    if (currentRoute === "map") {
+        return null;
+    }
+
     const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
     useEffect(() => {

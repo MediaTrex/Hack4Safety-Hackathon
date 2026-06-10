@@ -141,7 +141,7 @@ class ModelRegistry:
 
     def load_all(self):
         """Load all saved models from disk."""
-        from models.flood_model     import FloodRiskModel
+        from models.flood_model    import FloodRiskModel
         from models.landslide_model import LandslideRiskModel
         from models.accident_model  import AccidentHotspotModel
         from models.crowd_model     import CrowdDensityModel

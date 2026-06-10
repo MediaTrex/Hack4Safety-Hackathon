@@ -1,78 +1,64 @@
-2026-06-09 21:14:38.331 | INFO     | __main__:train_all_models:23 - ============================================================
-2026-06-09 21:14:38.333 | INFO     | __main__:train_all_models:24 - SAJAG AI – Full ML Training Pipeline
-2026-06-09 21:14:38.334 | INFO     | __main__:train_all_models:25 - ============================================================
-2026-06-09 21:14:38.334 | INFO     | __main__:train_all_models:29 - STEP 1/6 – Generating synthetic training datasets...
-2026-06-09 21:14:43.606 | INFO     | api.data_generator:generate_flood_dataset:74 - Flood dataset: 15000 rows | flood rate=41.11%
-2026-06-09 21:14:43.620 | INFO     | api.data_generator:generate_landslide_dataset:137 - Landslide dataset: 12000 rows | rate=46.26%
-2026-06-09 21:14:43.643 | INFO     | api.data_generator:generate_accident_dataset:200 - Accident dataset: 20000 rows | rate=46.21%
-2026-06-09 21:14:43.650 | INFO     | api.data_generator:generate_crowd_dataset:253 - Crowd dataset: 8000 rows | critical rate=2.93%
-2026-06-09 21:14:43.663 | INFO     | api.data_generator:generate_priority_dataset:311 - Priority dataset: 10000 rows | critical rate=3.56%
-2026-06-09 21:14:43.901 | SUCCESS  | api.data_generator:generate_all:331 - Saved flood dataset → C:\Users\VIPUL SHAH\OneDrive\Documents\Figma Internship\Internship\Hack4safety\Hack4Safety-Hackathon\ai-engine\api\data\flood_training.csv
-2026-06-09 21:14:44.075 | SUCCESS  | api.data_generator:generate_all:331 - Saved landslide dataset → C:\Users\VIPUL SHAH\OneDrive\Documents\Figma Internship\Internship\Hack4safety\Hack4Safety-Hackathon\ai-engine\api\data\landslide_training.csv
-2026-06-09 21:14:44.331 | SUCCESS  | api.data_generator:generate_all:331 - Saved accident dataset → C:\Users\VIPUL SHAH\OneDrive\Documents\Figma Internship\Internship\Hack4safety\Hack4Safety-Hackathon\ai-engine\api\data\accident_training.csv
-2026-06-09 21:14:44.413 | SUCCESS  | api.data_generator:generate_all:331 - Saved crowd dataset → C:\Users\VIPUL SHAH\OneDrive\Documents\Figma Internship\Internship\Hack4safety\Hack4Safety-Hackathon\ai-engine\api\data\crowd_training.csv
-2026-06-09 21:14:44.501 | SUCCESS  | api.data_generator:generate_all:331 - Saved priority dataset → C:\Users\VIPUL SHAH\OneDrive\Documents\Figma Internship\Internship\Hack4safety\Hack4Safety-Hackathon\ai-engine\api\data\priority_training.csv
-2026-06-09 21:14:44.502 | SUCCESS  | __main__:train_all_models:32 - Datasets generated: ['flood', 'landslide', 'accident', 'crowd', 'priority']
-2026-06-09 21:14:44.502 | INFO     | __main__:train_all_models:37 - STEP 2/6 – Training Flood Risk Model...
-2026-06-09 21:15:30.157 | INFO     | api.flood_model:train:76 - RF  CV AUC: 0.6158 ± 0.0051
-2026-06-09 21:15:30.157 | INFO     | api.flood_model:train:77 - XGB CV AUC: 0.5896 ± 0.0077
-2026-06-09 21:15:36.506 | SUCCESS  | api.flood_model:train:120 - Flood model trained | ROC-AUC=0.6098 | AP=0.5248
-2026-06-09 21:15:36.866 | SUCCESS  | api.flood_model:save:181 - Flood model saved → C:\Users\VIPUL SHAH\OneDrive\Documents\Figma Internship\Internship\Hack4safety\Hack4Safety-Hackathon\ai-engine\api\models\saved\flood_model.pkl
-2026-06-09 21:15:36.867 | SUCCESS  | __main__:train_all_models:48 - Flood model ✓ | AUC=0.6098
-2026-06-09 21:15:36.868 | INFO     | __main__:train_all_models:51 - STEP 3/6 – Training Landslide Risk Model...
-2026-06-09 21:15:54.458 | INFO     | api.landslide_model:train:68 - XGB CV AUC: 0.5551 ± 0.0139
-2026-06-09 21:15:54.458 | INFO     | api.landslide_model:train:69 - RF  CV AUC: 0.5834 ± 0.0157
-2026-06-09 21:16:02.779 | SUCCESS  | api.landslide_model:train:99 - Landslide model | ROC-AUC=0.5659
-2026-06-09 21:16:03.080 | SUCCESS  | api.landslide_model:save:145 - Landslide model saved → C:\Users\VIPUL SHAH\OneDrive\Documents\Figma Internship\Internship\Hack4safety\Hack4Safety-Hackathon\ai-engine\api\models\saved\landslide_model.pkl
-2026-06-09 21:16:03.081 | SUCCESS  | __main__:train_all_models:62 - Landslide model ✓ | AUC=0.5659
-2026-06-09 21:16:03.081 | INFO     | __main__:train_all_models:65 - STEP 4/6 – Training Accident Hotspot Model...
-2026-06-09 21:34:18.255 | INFO     | __main__:train_all_models:23 - ============================================================
-2026-06-09 21:34:18.257 | INFO     | __main__:train_all_models:24 - SAJAG AI – Full ML Training Pipeline
-2026-06-09 21:34:18.257 | INFO     | __main__:train_all_models:25 - ============================================================
-2026-06-09 21:34:18.258 | INFO     | __main__:train_all_models:29 - STEP 1/6 – Generating synthetic training datasets...
-2026-06-09 21:34:19.714 | INFO     | data.data_generator:generate_flood_dataset:74 - Flood dataset: 15000 rows | flood rate=41.11%
-2026-06-09 21:34:19.728 | INFO     | data.data_generator:generate_landslide_dataset:137 - Landslide dataset: 12000 rows | rate=46.26%
-2026-06-09 21:34:19.758 | INFO     | data.data_generator:generate_accident_dataset:200 - Accident dataset: 20000 rows | rate=46.21%
-2026-06-09 21:34:19.766 | INFO     | data.data_generator:generate_crowd_dataset:253 - Crowd dataset: 8000 rows | critical rate=2.93%
-2026-06-09 21:34:19.779 | INFO     | data.data_generator:generate_priority_dataset:311 - Priority dataset: 10000 rows | critical rate=3.56%
-2026-06-09 21:34:20.053 | SUCCESS  | data.data_generator:generate_all:331 - Saved flood dataset → C:\Users\VIPUL SHAH\OneDrive\Documents\Figma Internship\Internship\Hack4safety\Hack4Safety-Hackathon\ai-engine\data\flood_training.csv
-2026-06-09 21:34:20.297 | SUCCESS  | data.data_generator:generate_all:331 - Saved landslide dataset → C:\Users\VIPUL SHAH\OneDrive\Documents\Figma Internship\Internship\Hack4safety\Hack4Safety-Hackathon\ai-engine\data\landslide_training.csv
-2026-06-09 21:34:20.675 | SUCCESS  | data.data_generator:generate_all:331 - Saved accident dataset → C:\Users\VIPUL SHAH\OneDrive\Documents\Figma Internship\Internship\Hack4safety\Hack4Safety-Hackathon\ai-engine\data\accident_training.csv
-2026-06-09 21:34:20.774 | SUCCESS  | data.data_generator:generate_all:331 - Saved crowd dataset → C:\Users\VIPUL SHAH\OneDrive\Documents\Figma Internship\Internship\Hack4safety\Hack4Safety-Hackathon\ai-engine\data\crowd_training.csv
-2026-06-09 21:34:20.919 | SUCCESS  | data.data_generator:generate_all:331 - Saved priority dataset → C:\Users\VIPUL SHAH\OneDrive\Documents\Figma Internship\Internship\Hack4safety\Hack4Safety-Hackathon\ai-engine\data\priority_training.csv
-2026-06-09 21:34:20.955 | SUCCESS  | __main__:train_all_models:32 - Datasets generated: ['flood', 'landslide', 'accident', 'crowd', 'priority']
-2026-06-09 21:34:20.959 | INFO     | __main__:train_all_models:37 - STEP 2/6 – Training Flood Risk Model...
-2026-06-09 21:34:50.613 | INFO     | models.flood_model:train:76 - RF  CV AUC: 0.6158 ± 0.0051
-2026-06-09 21:34:50.613 | INFO     | models.flood_model:train:77 - XGB CV AUC: 0.5896 ± 0.0077
-2026-06-09 21:34:56.094 | SUCCESS  | models.flood_model:train:120 - Flood model trained | ROC-AUC=0.6098 | AP=0.5248
-2026-06-09 21:34:56.291 | SUCCESS  | models.flood_model:save:181 - Flood model saved → C:\Users\VIPUL SHAH\OneDrive\Documents\Figma Internship\Internship\Hack4safety\Hack4Safety-Hackathon\ai-engine\models\saved\flood_model.pkl
-2026-06-09 21:34:56.291 | SUCCESS  | __main__:train_all_models:48 - Flood model ✓ | AUC=0.6098
-2026-06-09 21:34:56.292 | INFO     | __main__:train_all_models:51 - STEP 3/6 – Training Landslide Risk Model...
-2026-06-09 21:35:10.506 | INFO     | models.landslide_model:train:68 - XGB CV AUC: 0.5551 ± 0.0139
-2026-06-09 21:35:10.507 | INFO     | models.landslide_model:train:69 - RF  CV AUC: 0.5834 ± 0.0157
-2026-06-09 21:35:15.712 | SUCCESS  | models.landslide_model:train:99 - Landslide model | ROC-AUC=0.5659
-2026-06-09 21:35:15.986 | SUCCESS  | models.landslide_model:save:145 - Landslide model saved → C:\Users\VIPUL SHAH\OneDrive\Documents\Figma Internship\Internship\Hack4safety\Hack4Safety-Hackathon\ai-engine\models\saved\landslide_model.pkl
-2026-06-09 21:35:15.986 | SUCCESS  | __main__:train_all_models:62 - Landslide model ✓ | AUC=0.5659
-2026-06-09 21:35:15.987 | INFO     | __main__:train_all_models:65 - STEP 4/6 – Training Accident Hotspot Model...
-2026-06-09 21:35:25.223 | INFO     | models.accident_model:train:69 - RF  CV AUC: 0.6065 ± 0.0094
-2026-06-09 21:35:25.224 | INFO     | models.accident_model:train:70 - XGB CV AUC: 0.5841 ± 0.0083
-2026-06-09 21:35:28.498 | SUCCESS  | models.accident_model:train:97 - Accident model | ROC-AUC=0.5921 | F1=0.5870
-2026-06-09 21:35:28.676 | SUCCESS  | models.accident_model:save:173 - Accident model saved → C:\Users\VIPUL SHAH\OneDrive\Documents\Figma Internship\Internship\Hack4safety\Hack4Safety-Hackathon\ai-engine\models\saved\accident_model.pkl
-2026-06-09 21:35:28.677 | SUCCESS  | __main__:train_all_models:76 - Accident model ✓ | AUC=0.5921
-2026-06-09 21:35:28.677 | INFO     | __main__:train_all_models:79 - STEP 5/6 – Training Crowd Density Model...
-2026-06-09 21:35:32.356 | SUCCESS  | __main__:train_all_models:90 - Crowd model ✓ | RMSE=0.03355748414977604
-2026-06-09 21:35:32.357 | INFO     | __main__:train_all_models:93 - STEP 6/6 – Training Rescue Priority Model...
-2026-06-09 21:35:42.062 | INFO     | models.priority_model:train:78 - Classifier CV F1: 0.8653 ± 0.0032
-2026-06-09 21:35:49.907 | SUCCESS  | models.priority_model:train:107 - Priority model | CLF F1=0.8653 | REG RMSE=0.0331
-2026-06-09 21:35:49.980 | SUCCESS  | models.priority_model:save:200 - Priority model saved → C:\Users\VIPUL SHAH\OneDrive\Documents\Figma Internship\Internship\Hack4safety\Hack4Safety-Hackathon\ai-engine\models\saved\priority_model.pkl
-2026-06-09 21:35:49.980 | SUCCESS  | __main__:train_all_models:105 - Priority model ✓ | F1=0.8653
-2026-06-09 21:35:49.982 | INFO     | __main__:train_all_models:111 - ============================================================
-2026-06-09 21:35:49.982 | INFO     | __main__:train_all_models:112 - TRAINING COMPLETE – Summary
-2026-06-09 21:35:49.982 | INFO     | __main__:train_all_models:113 - ============================================================
-2026-06-09 21:35:49.983 | INFO     | __main__:train_all_models:117 -   flood       : {'roc_auc': 0.6098, 'avg_precision': 0.5248, 'time_sec': 35.3}
-2026-06-09 21:35:49.983 | INFO     | __main__:train_all_models:117 -   landslide   : {'roc_auc': 0.5659, 'avg_precision': 0.5223, 'time_sec': 19.7}
-2026-06-09 21:35:49.983 | INFO     | __main__:train_all_models:117 -   accident    : {'roc_auc': 0.5921, 'f1_score': 0.587, 'time_sec': 12.7}
-2026-06-09 21:35:49.984 | INFO     | __main__:train_all_models:117 -   crowd       : {'stampede_rmse': 0.03355748414977604, 'stampede_r2': 0.937517329459884, 'time_sec': 3.7}
-2026-06-09 21:35:49.984 | INFO     | __main__:train_all_models:117 -   priority    : {'clf_f1': np.float64(0.8653), 'reg_rmse': np.float64(0.0331), 'reg_r2': 0.9516, 'time_sec': 17.6}
-2026-06-09 21:35:49.984 | INFO     | __main__:train_all_models:118 -   Total time: 91.7s
-2026-06-09 21:35:49.986 | SUCCESS  | __main__:train_all_models:124 - Metrics saved → logs\training_report.json
+2026-06-10 11:38:25.902 | INFO     | __main__:train_all_models:23 - ============================================================
+2026-06-10 11:38:25.905 | INFO     | __main__:train_all_models:24 - SAJAG AI – Full ML Training Pipeline
+2026-06-10 11:38:25.905 | INFO     | __main__:train_all_models:25 - ============================================================
+2026-06-10 11:38:25.905 | INFO     | __main__:train_all_models:29 - STEP 1/6 – Generating synthetic training datasets...
+2026-06-10 11:38:31.121 | INFO     | data.data_generator:generate_flood_dataset:90 - Flood dataset: 15000 rows | flood rate=41.11%
+2026-06-10 11:38:31.134 | INFO     | data.data_generator:generate_landslide_dataset:171 - Landslide dataset: 12000 rows | rate=46.26%
+2026-06-10 11:38:31.155 | INFO     | data.data_generator:generate_accident_dataset:253 - Accident dataset: 20000 rows | rate=46.21%
+2026-06-10 11:38:31.165 | INFO     | data.data_generator:generate_crowd_dataset:323 - Crowd dataset: 8000 rows | critical rate=2.93%
+2026-06-10 11:38:31.181 | INFO     | data.data_generator:generate_priority_dataset:400 - Priority dataset: 10000 rows | critical rate=3.56%
+2026-06-10 11:38:31.498 | SUCCESS  | data.data_generator:generate_all:420 - Saved flood dataset → C:\Users\VIPUL SHAH\OneDrive\Documents\Figma Internship\Internship\Hack4safety\Hack4Safety-Hackathon\ai-engine\data\flood_training.csv
+2026-06-10 11:38:31.691 | SUCCESS  | data.data_generator:generate_all:420 - Saved landslide dataset → C:\Users\VIPUL SHAH\OneDrive\Documents\Figma Internship\Internship\Hack4safety\Hack4Safety-Hackathon\ai-engine\data\landslide_training.csv
+2026-06-10 11:38:31.946 | SUCCESS  | data.data_generator:generate_all:420 - Saved accident dataset → C:\Users\VIPUL SHAH\OneDrive\Documents\Figma Internship\Internship\Hack4safety\Hack4Safety-Hackathon\ai-engine\data\accident_training.csv
+2026-06-10 11:38:32.030 | SUCCESS  | data.data_generator:generate_all:420 - Saved crowd dataset → C:\Users\VIPUL SHAH\OneDrive\Documents\Figma Internship\Internship\Hack4safety\Hack4Safety-Hackathon\ai-engine\data\crowd_training.csv
+2026-06-10 11:38:32.112 | SUCCESS  | data.data_generator:generate_all:420 - Saved priority dataset → C:\Users\VIPUL SHAH\OneDrive\Documents\Figma Internship\Internship\Hack4safety\Hack4Safety-Hackathon\ai-engine\data\priority_training.csv
+2026-06-10 11:38:32.112 | SUCCESS  | __main__:train_all_models:32 - Datasets generated: ['flood', 'landslide', 'accident', 'crowd', 'priority']
+2026-06-10 11:38:32.113 | INFO     | __main__:train_all_models:37 - STEP 2/6 – Training Flood Risk Model...
+2026-06-10 11:39:08.342 | INFO     | models.flood_model:train:76 - RF  CV AUC: 0.6184 ± 0.0056
+2026-06-10 11:39:08.342 | INFO     | models.flood_model:train:77 - XGB CV AUC: 0.5896 ± 0.0077
+2026-06-10 11:39:13.899 | SUCCESS  | models.flood_model:train:120 - Flood model trained | ROC-AUC=0.6090 | AP=0.5254
+2026-06-10 11:39:14.096 | SUCCESS  | models.flood_model:save:181 - Flood model saved → C:\Users\VIPUL SHAH\OneDrive\Documents\Figma Internship\Internship\Hack4safety\Hack4Safety-Hackathon\ai-engine\models\saved\flood_model.pkl
+2026-06-10 11:39:14.096 | SUCCESS  | __main__:train_all_models:48 - Flood model ✓ | AUC=0.609
+2026-06-10 11:39:14.097 | INFO     | __main__:train_all_models:51 - STEP 3/6 – Training Landslide Risk Model...
+2026-06-10 11:39:25.803 | INFO     | models.landslide_model:train:68 - XGB CV AUC: 0.5551 ± 0.0139
+2026-06-10 11:39:25.804 | INFO     | models.landslide_model:train:69 - RF  CV AUC: 0.5810 ± 0.0158
+2026-06-10 11:39:29.820 | SUCCESS  | models.landslide_model:train:99 - Landslide model | ROC-AUC=0.5656
+2026-06-10 11:39:30.000 | SUCCESS  | models.landslide_model:save:145 - Landslide model saved → C:\Users\VIPUL SHAH\OneDrive\Documents\Figma Internship\Internship\Hack4safety\Hack4Safety-Hackathon\ai-engine\models\saved\landslide_model.pkl
+2026-06-10 11:39:30.001 | SUCCESS  | __main__:train_all_models:62 - Landslide model ✓ | AUC=0.5656
+2026-06-10 11:39:30.002 | INFO     | __main__:train_all_models:65 - STEP 4/6 – Training Accident Hotspot Model...
+2026-06-10 11:39:37.588 | INFO     | models.accident_model:train:69 - RF  CV AUC: 0.6071 ± 0.0099
+2026-06-10 11:39:37.589 | INFO     | models.accident_model:train:70 - XGB CV AUC: 0.5841 ± 0.0083
+2026-06-10 11:39:40.336 | SUCCESS  | models.accident_model:train:97 - Accident model | ROC-AUC=0.5926 | F1=0.5877
+2026-06-10 11:39:40.522 | SUCCESS  | models.accident_model:save:173 - Accident model saved → C:\Users\VIPUL SHAH\OneDrive\Documents\Figma Internship\Internship\Hack4safety\Hack4Safety-Hackathon\ai-engine\models\saved\accident_model.pkl
+2026-06-10 11:39:40.523 | SUCCESS  | __main__:train_all_models:76 - Accident model ✓ | AUC=0.5926
+2026-06-10 11:39:40.524 | INFO     | __main__:train_all_models:79 - STEP 5/6 – Training Crowd Density Model...
+2026-06-10 11:39:44.918 | SUCCESS  | models.crowd_model:train:88 - Crowd model trained | RMSE=0.0328
+2026-06-10 11:39:44.953 | SUCCESS  | models.crowd_model:save:114 - Crowd model saved → C:\Users\VIPUL SHAH\OneDrive\Documents\Figma Internship\Internship\Hack4safety\Hack4Safety-Hackathon\ai-engine\models\saved\crowd_model.pkl
+2026-06-10 11:39:44.954 | SUCCESS  | __main__:train_all_models:90 - Crowd model ✓ | RMSE=0.0328
+2026-06-10 11:39:44.954 | INFO     | __main__:train_all_models:93 - STEP 6/6 – Training Rescue Priority Model...
+2026-06-10 11:39:54.488 | INFO     | models.priority_model:train:78 - Classifier CV F1: 0.8653 ± 0.0032
+2026-06-10 11:40:02.481 | SUCCESS  | models.priority_model:train:107 - Priority model | CLF F1=0.8653 | REG RMSE=0.0331
+2026-06-10 11:40:02.807 | SUCCESS  | models.priority_model:save:200 - Priority model saved → C:\Users\VIPUL SHAH\OneDrive\Documents\Figma Internship\Internship\Hack4safety\Hack4Safety-Hackathon\ai-engine\models\saved\priority_model.pkl
+2026-06-10 11:40:02.857 | SUCCESS  | __main__:train_all_models:105 - Priority model ✓ | F1=0.8653
+2026-06-10 11:40:02.857 | INFO     | __main__:train_all_models:111 - ============================================================
+2026-06-10 11:40:02.859 | INFO     | __main__:train_all_models:112 - TRAINING COMPLETE – Summary
+2026-06-10 11:40:02.859 | INFO     | __main__:train_all_models:113 - ============================================================
+2026-06-10 11:40:02.860 | INFO     | __main__:train_all_models:117 -   flood       : {'roc_auc': 0.609, 'avg_precision': 0.5254, 'time_sec': 42.0}
+2026-06-10 11:40:02.860 | INFO     | __main__:train_all_models:117 -   landslide   : {'roc_auc': 0.5656, 'avg_precision': 0.5216, 'time_sec': 15.9}
+2026-06-10 11:40:02.861 | INFO     | __main__:train_all_models:117 -   accident    : {'roc_auc': 0.5926, 'f1_score': 0.5877, 'time_sec': 10.5}
+2026-06-10 11:40:02.863 | INFO     | __main__:train_all_models:117 -   crowd       : {'stampede_rmse': np.float64(0.0328), 'stampede_r2': 0.9402, 'time_sec': 4.4}
+2026-06-10 11:40:02.865 | INFO     | __main__:train_all_models:117 -   priority    : {'clf_f1': np.float64(0.8653), 'reg_rmse': np.float64(0.0331), 'reg_r2': 0.9516, 'time_sec': 17.9}
+2026-06-10 11:40:02.870 | INFO     | __main__:train_all_models:118 -   Total time: 97.0s
+2026-06-10 11:40:02.872 | SUCCESS  | __main__:train_all_models:124 - Metrics saved → logs\training_report.json
+2026-06-10 11:41:53.885 | INFO     | api.prediction_api:startup:49 - Loading AI models...
+2026-06-10 11:41:57.275 | INFO     | models.flood_model:load:190 - Flood model loaded.
+2026-06-10 11:41:57.276 | INFO     | train_pipeline:load_all:162 - Loaded: flood
+2026-06-10 11:41:58.803 | INFO     | models.landslide_model:load:154 - Landslide model loaded.
+2026-06-10 11:41:58.804 | INFO     | train_pipeline:load_all:162 - Loaded: landslide
+2026-06-10 11:41:59.029 | INFO     | models.accident_model:load:182 - Accident model loaded.
+2026-06-10 11:41:59.030 | INFO     | train_pipeline:load_all:162 - Loaded: accident
+2026-06-10 11:41:59.312 | INFO     | models.crowd_model:load:120 - Crowd model loaded.
+2026-06-10 11:41:59.313 | INFO     | train_pipeline:load_all:162 - Loaded: crowd
+2026-06-10 11:42:00.005 | INFO     | models.priority_model:load:209 - Priority model loaded.
+2026-06-10 11:42:00.005 | INFO     | train_pipeline:load_all:162 - Loaded: priority
+2026-06-10 11:42:00.005 | SUCCESS  | api.prediction_api:startup:52 - Models loaded: ['flood', 'landslide', 'accident', 'crowd', 'priority']

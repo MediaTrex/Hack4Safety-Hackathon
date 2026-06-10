@@ -9,9 +9,6 @@ import pandas as pd
 from pathlib import Path
 from loguru import logger
 
-import sys
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-
 from config import DATA_DIR, NEPAL_BOUNDS, HIGH_RISK_DISTRICTS
 
 rng = np.random.default_rng(42)
@@ -22,6 +19,24 @@ rng = np.random.default_rng(42)
 # ─────────────────────────────────────────────────────────────────────────────
 
 def generate_flood_dataset(n: int = 15_000) -> pd.DataFrame:
+    """
+    Features:
+        rainfall_mm_24h      - 24-hour cumulative rainfall
+        rainfall_mm_72h      - 72-hour cumulative rainfall
+        river_level_m        - river gauge reading in metres
+        river_level_change   - change in river level last 6 hrs
+        soil_moisture_pct    - soil saturation percentage
+        slope_deg            - terrain slope degrees
+        elevation_m          - elevation above sea level
+        dist_to_river_km     - distance to nearest river
+        population_density   - people per km²
+        drainage_capacity    - 0-1 index (1 = excellent)
+        season               - 0=dry, 1=pre-monsoon, 2=monsoon, 3=post
+        district_risk        - 0-1 historical district risk index
+        land_use             - 0=forest,1=agriculture,2=settlement,3=barren
+    Target:
+        flood_occurred       - binary
+    """
     lat = rng.uniform(NEPAL_BOUNDS["lat_min"], NEPAL_BOUNDS["lat_max"], n)
     lon = rng.uniform(NEPAL_BOUNDS["lon_min"], NEPAL_BOUNDS["lon_max"], n)
 
@@ -41,6 +56,7 @@ def generate_flood_dataset(n: int = 15_000) -> pd.DataFrame:
     district_risk    = rng.uniform(0.1, 1.0, n)
     land_use         = rng.choice([0, 1, 2, 3], n, p=[0.30, 0.40, 0.20, 0.10])
 
+    # Probability formula combining domain knowledge
     p_flood = (
         0.25 * np.clip(rainfall_24h / 200, 0, 1) +
         0.20 * np.clip(rainfall_72h / 600, 0, 1) +
@@ -80,10 +96,27 @@ def generate_flood_dataset(n: int = 15_000) -> pd.DataFrame:
 # ─────────────────────────────────────────────────────────────────────────────
 
 def generate_landslide_dataset(n: int = 12_000) -> pd.DataFrame:
+    """
+    Features:
+        rainfall_mm_24h, rainfall_mm_72h
+        slope_deg            - steeper = more risk
+        aspect_deg           - slope aspect (0-360)
+        elevation_m
+        soil_type            - 0=rock,1=clay,2=sandy,3=loam
+        vegetation_cover_pct - 0-100
+        road_proximity_km    - distance to nearest road
+        fault_proximity_km   - distance to geological fault
+        seismic_activity     - 0=none,1=low,2=moderate,3=high
+        prev_landslide_1km   - binary: prior event nearby
+        district_risk
+        antecedent_rain_7d   - cumulative 7-day rainfall
+    Target:
+        landslide_occurred
+    """
     lat = rng.uniform(NEPAL_BOUNDS["lat_min"], NEPAL_BOUNDS["lat_max"], n)
     lon = rng.uniform(NEPAL_BOUNDS["lon_min"], NEPAL_BOUNDS["lon_max"], n)
 
-    slope              = rng.gamma(3, 10, n)
+    slope              = rng.gamma(3, 10, n)          # concentrated around 30 deg
     aspect             = rng.uniform(0, 360, n)
     elevation          = rng.uniform(500, 5000, n)
     soil_type          = rng.choice([0, 1, 2, 3], n, p=[0.15, 0.35, 0.25, 0.25])
@@ -99,6 +132,7 @@ def generate_landslide_dataset(n: int = 12_000) -> pd.DataFrame:
     rainfall_72h       = rainfall_24h * rng.uniform(2, 3.5, n)
     antecedent_rain    = rainfall_72h + rng.uniform(0, 100, n)
 
+    # Risk: steep slopes, clay soil, saturated, near faults, prior events
     slope_norm = np.clip(slope / 60, 0, 1)
     soil_factor = np.where(soil_type == 1, 0.9,
                   np.where(soil_type == 3, 0.7,
@@ -143,6 +177,24 @@ def generate_landslide_dataset(n: int = 12_000) -> pd.DataFrame:
 # ─────────────────────────────────────────────────────────────────────────────
 
 def generate_accident_dataset(n: int = 20_000) -> pd.DataFrame:
+    """
+    Features:
+        hour_of_day, day_of_week, month
+        road_type          - 0=highway,1=district,2=urban,3=rural
+        road_condition     - 0=excellent,1=good,2=poor,3=damaged
+        visibility_m       - visibility in metres
+        traffic_volume     - vehicles per hour
+        speed_limit_kmh
+        road_width_m
+        intersection_type  - 0=none,1=Tintersect,2=4way,3=roundabout
+        street_lighting    - 0=none,1=poor,2=adequate,3=good
+        weather_condition  - 0=clear,1=fog,2=rain,3=snow
+        slope_pct          - gradient percentage
+        prev_accidents_1km - count in past year
+        dist_to_hospital_km
+    Target:
+        accident_occurred
+    """
     hour        = rng.integers(0, 24, n)
     dow         = rng.integers(0, 7, n)
     month       = rng.integers(1, 13, n)
@@ -162,6 +214,7 @@ def generate_accident_dataset(n: int = 20_000) -> pd.DataFrame:
     lat         = rng.uniform(NEPAL_BOUNDS["lat_min"], NEPAL_BOUNDS["lat_max"], n)
     lon         = rng.uniform(NEPAL_BOUNDS["lon_min"], NEPAL_BOUNDS["lon_max"], n)
 
+    # Rush hours (7-9, 17-19) and weekends increase risk
     hour_risk = np.where((hour >= 7) & (hour <= 9), 0.7,
                 np.where((hour >= 17) & (hour <= 19), 0.8,
                 np.where((hour >= 22) | (hour <= 5), 0.9, 0.3)))
@@ -202,10 +255,25 @@ def generate_accident_dataset(n: int = 20_000) -> pd.DataFrame:
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# CROWD DENSITY DATASET
+# CROWD DENSITY DATASET  (for tabular model; CV handled separately)
 # ─────────────────────────────────────────────────────────────────────────────
 
 def generate_crowd_dataset(n: int = 8_000) -> pd.DataFrame:
+    """
+    Features:
+        hour_of_day, day_of_week, month
+        event_type           - 0=none,1=festival,2=political,3=sports,4=market
+        venue_capacity       - total capacity
+        estimated_crowd      - current headcount
+        area_m2              - venue area
+        entry_points         - number of entry/exit points
+        ambient_temp_c       - temperature
+        security_personnel   - security count
+        emergency_exits      - count
+    Targets:
+        crowd_density_level  - 0=normal,1=dense,2=overcrowded,3=critical
+        stampede_risk        - 0-1 probability
+    """
     hour         = rng.integers(0, 24, n)
     dow          = rng.integers(0, 7, n)
     month        = rng.integers(1, 13, n)
@@ -221,11 +289,13 @@ def generate_crowd_dataset(n: int = 8_000) -> pd.DataFrame:
     occupancy    = crowd / np.maximum(capacity, 1)
     density_m2   = crowd / np.maximum(area, 1)
 
+    # Crowd density level
     levels = np.zeros(n, dtype=int)
     levels[occupancy > 0.50] = 1
     levels[occupancy > 0.75] = 2
     levels[occupancy > 0.90] = 3
 
+    # Stampede risk score
     p_stamp = (
         0.30 * np.clip(occupancy, 0, 1) +
         0.20 * (1 - np.clip(entries / 20, 0, 1)) +
@@ -250,7 +320,7 @@ def generate_crowd_dataset(n: int = 8_000) -> pd.DataFrame:
         "crowd_density_level": levels,
         "stampede_risk": p_stamp.round(4),
     })
-    logger.info(f"Crowd dataset: {len(df)} rows | critical rate={(levels==3).mean():.2%}")
+    logger.info(f"Crowd dataset: {len(df)} rows | critical rate={( levels==3).mean():.2%}")
     return df
 
 
@@ -259,13 +329,32 @@ def generate_crowd_dataset(n: int = 8_000) -> pd.DataFrame:
 # ─────────────────────────────────────────────────────────────────────────────
 
 def generate_priority_dataset(n: int = 10_000) -> pd.DataFrame:
+    """
+    Features:
+        disaster_type        - encoded integer
+        people_count         - number of people reported trapped/affected
+        children_count       - number of children
+        elderly_count        - number of elderly
+        injured_count
+        critical_count       - critically injured
+        time_elapsed_min     - minutes since SOS
+        weather_severity     - 0-3
+        location_accessibility - 0=accessible, 3=very remote
+        flood_risk_score     - from flood model
+        landslide_risk_score - from landslide model
+        available_teams      - rescue teams currently free
+        nearest_team_dist_km
+    Target:
+        priority_score       - 0-1 continuous (for regression)
+        priority_class       - 0=Low,1=Medium,2=High,3=Critical
+    """
     dis_type    = rng.integers(0, 8, n)
     people      = rng.integers(1, 200, n)
     children    = (people * rng.beta(1, 4, n)).astype(int)
     elderly     = (people * rng.beta(1, 5, n)).astype(int)
     injured     = np.minimum((people * rng.beta(2, 3, n)).astype(int), people)
     critical    = np.minimum((injured * rng.beta(1, 4, n)).astype(int), injured)
-    elapsed     = rng.exponential(30, n).clip(0, 1440)
+    elapsed     = rng.exponential(30, n).clip(0, 1440)  # minutes
     weather     = rng.choice([0, 1, 2, 3], n, p=[0.40, 0.25, 0.25, 0.10])
     access      = rng.choice([0, 1, 2, 3], n, p=[0.30, 0.30, 0.25, 0.15])
     flood_risk  = rng.uniform(0, 1, n)

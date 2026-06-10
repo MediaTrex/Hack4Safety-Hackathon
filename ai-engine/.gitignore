@@ -1,1 +1,42 @@
-.venv
+# Make sure you're in ai-engine folder
+@"
+# Virtual environment
+venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Data files (large, generated)
+data/*.csv
+data/*.json
+
+# Trained models (large binary files)
+models/saved/*.pkl
+models/saved/*.pt
+
+# Logs
+logs/
+*.log
+
+# Environment variables
+.env
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+
+# PyCharm
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/
+"@ | Set-Content .gitignore

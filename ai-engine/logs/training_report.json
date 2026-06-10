@@ -1,29 +1,29 @@
 {
   "flood": {
-    "roc_auc": 0.6098,
-    "avg_precision": 0.5248,
-    "time_sec": 35.3
+    "roc_auc": 0.609,
+    "avg_precision": 0.5254,
+    "time_sec": 42.0
   },
   "landslide": {
-    "roc_auc": 0.5659,
-    "avg_precision": 0.5223,
-    "time_sec": 19.7
+    "roc_auc": 0.5656,
+    "avg_precision": 0.5216,
+    "time_sec": 15.9
   },
   "accident": {
-    "roc_auc": 0.5921,
-    "f1_score": 0.587,
-    "time_sec": 12.7
+    "roc_auc": 0.5926,
+    "f1_score": 0.5877,
+    "time_sec": 10.5
   },
   "crowd": {
-    "stampede_rmse": 0.03355748414977604,
-    "stampede_r2": 0.937517329459884,
-    "time_sec": 3.7
+    "stampede_rmse": 0.0328,
+    "stampede_r2": 0.9402,
+    "time_sec": 4.4
   },
   "priority": {
     "clf_f1": 0.8653,
     "reg_rmse": 0.0331,
     "reg_r2": 0.9516,
-    "time_sec": 17.6
+    "time_sec": 17.9
   },
-  "total_time_sec": 91.7
+  "total_time_sec": 97.0
 }

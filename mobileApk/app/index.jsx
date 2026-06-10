@@ -89,7 +89,12 @@ export default function Home() {
                         </View>
                     </View>
                     <View>
-                        <TouchableOpacity className="flex-row items-center justify-end">
+                        <TouchableOpacity
+                            className="flex-row items-center justify-end"
+                            onPress={() => {
+                                router.push("/(rescuers)/login-rescuers");
+                            }}
+                        >
                             <Ionicons
                                 name="arrow-forward-circle"
                                 size={35}

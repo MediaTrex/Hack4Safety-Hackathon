@@ -8,6 +8,7 @@ import {
     Dimensions,
     StatusBar,
     Platform,
+    Linking,
 } from "react-native";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -73,8 +74,8 @@ const INITIAL_ALERTS = [
         id: "1",
         type: "fire",
         title: "Building Fire",
-        latitude: 27.7175,
-        longitude: 85.3251,
+        latitude: 37.422,
+        longitude: -122.084,
         time: "2 min ago",
         severity: "High",
     },
@@ -82,8 +83,8 @@ const INITIAL_ALERTS = [
         id: "2",
         type: "flood",
         title: "Flood Warning",
-        latitude: 27.7188,
-        longitude: 85.3235,
+        latitude: 37.425,
+        longitude: -122.081,
         time: "5 min ago",
         severity: "Medium",
     },
@@ -91,8 +92,8 @@ const INITIAL_ALERTS = [
         id: "3",
         type: "landslide",
         title: "Landslide Risk",
-        latitude: 27.7162,
-        longitude: 85.3268,
+        latitude: 37.419,
+        longitude: -122.087,
         time: "12 min ago",
         severity: "High",
     },
@@ -100,8 +101,8 @@ const INITIAL_ALERTS = [
         id: "4",
         type: "accident",
         title: "Road Accident",
-        latitude: 27.7199,
-        longitude: 85.322,
+        latitude: 37.423,
+        longitude: -122.079,
         time: "20 min ago",
         severity: "Low",
     },
@@ -109,8 +110,8 @@ const INITIAL_ALERTS = [
         id: "5",
         type: "fire",
         title: "Forest Fire",
-        latitude: 27.7145,
-        longitude: 85.329,
+        latitude: 37.418,
+        longitude: -122.09,
         time: "35 min ago",
         severity: "Critical",
     },
@@ -118,8 +119,8 @@ const INITIAL_ALERTS = [
         id: "6",
         type: "flood",
         title: "River Overflow",
-        latitude: 27.721,
-        longitude: 85.3245,
+        latitude: 37.426,
+        longitude: -122.083,
         time: "1 hr ago",
         severity: "Medium",
     },
@@ -523,9 +524,9 @@ export default function LiveDisasterMap({ navigation }) {
                 <MapView
                     ref={mapRef}
                     style={{ flex: 1 }}
-                    // provider={PROVIDER_GOOGLE}
+                    provider={PROVIDER_GOOGLE}
                     initialRegion={initialRegion}
-                    onPress={dismissDetail}
+                    // onPress={dismissDetail}
                     showsUserLocation
                     showsMyLocationButton={false}
                 >
@@ -605,18 +606,21 @@ export default function LiveDisasterMap({ navigation }) {
                         <Animated.View
                             style={{
                                 position: "absolute",
-                                inset: 0,
+                                top: 0,
+                                left: 0,
+                                right: 0,
+                                bottom: 0,
                                 backgroundColor: "#000",
                                 opacity: Animated.multiply(detailAnim, 0.2),
                             }}
-                            pointerEvents="none"
+                            pointerEvents="box-none"
                         />
 
                         {/* Sheet */}
                         <Animated.View
                             style={{
                                 position: "absolute",
-                                bottom: legendVisible ? LEGEND_HEIGHT + 8 : 12,
+                                bottom: legendVisible ? LEGEND_HEIGHT + 50 : 12,
                                 left: 12,
                                 right: 12,
                                 backgroundColor: "#FFFFFF",
@@ -825,6 +829,10 @@ export default function LiveDisasterMap({ navigation }) {
                                         borderRadius: 10,
                                         backgroundColor: "#F1F5F9",
                                         alignItems: "center",
+                                    }}
+                                    onPress={() => {
+                                        const url = `https://www.google.com/maps/dir/?api=1&destination=${selectedAlert.latitude},${selectedAlert.longitude}&travelmode=driving`;
+                                        Linking.openURL(url);
                                     }}
                                 >
                                     <Text

@@ -13,6 +13,8 @@ from app.routes.admin_dashboard_ws_routes import router as admin_dashboard_ws_ro
 from app.routes.dashboard_routes import router as dashboard_router
 from app.routes.mission_routes import router as mission_router
 from app.routes.admin_broadcast_ws_routes import router as admin_broadcast_ws_router
+from app.routes.citizen_routes import router as citizen_router
+from app.routes.expo_notification_routes import router as expo_notification_router
 
 
 settings = get_settings()
@@ -22,6 +24,12 @@ settings = get_settings()
 async def lifespan(app: FastAPI):
     # Startup
     await connect_to_mongo()
+    # Ensure Expo tokens collection has unique index on (user_id, expo_push_token)
+    from app.config.database import get_collection
+    from motor.motor_asyncio import AsyncIOMotorClient
+    col = await get_collection("expo_push_tokens")
+    # Create compound unique index if it doesn't exist
+    await col.create_index([("user_id", 1), ("expo_push_token", 1)], unique=True)
     yield
     # Shutdown
     await close_mongo_connection()
@@ -53,6 +61,8 @@ app.include_router(notifications_ws_router)
 app.include_router(admin_broadcast_ws_router)
 app.include_router(dashboard_router)
 app.include_router(mission_router)
+app.include_router(expo_notification_router)
+app.include_router(citizen_router)
 
 
 @app.get("/")

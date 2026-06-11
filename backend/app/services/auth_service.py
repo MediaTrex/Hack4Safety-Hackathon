@@ -156,8 +156,6 @@ async def request_forgot_password_otp(*, email: str) -> None:
     # Works for both rescue_team and admin users.
     await start_registration_otp(email=email, purpose="reset")
 
-
-
 async def reset_password(*, email: str, otp: str, new_password: str) -> None:
     # Works for both rescue_team and admin users.
     email_n = _normalize_email(email)

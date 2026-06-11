@@ -57,7 +57,8 @@ class ReportCreateRequest(BaseModel):
     # Optional base64-encoded voice blobs
     voice_messages: Optional[List[str]] = None
 
-    mobile_no: str = Field(..., min_length=6, max_length=30)
+    mobile_no: str = Field(..., min_length=6, max_length=30)  # keep original mobile number
+    citizen_id: str = Field(..., description="Reference to citizen document ID")
 
 
 class OperationReadResponse(BaseModel):

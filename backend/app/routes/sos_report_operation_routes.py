@@ -27,8 +27,8 @@ router = APIRouter(tags=["sos / report / operation"])
 
 @router.post("/sos")
 async def create_sos_endpoint(payload: SOSCreateRequest):
-    sos_id = await create_sos(payload)
-    return {"message": "SOS created", "sos_id": sos_id}
+    result = await create_sos(payload)
+    return {"message": "SOS created", "operation": result["operation"]}
 
 
 @router.get("/get-sos")

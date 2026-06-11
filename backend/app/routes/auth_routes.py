@@ -17,12 +17,12 @@ from app.services.auth_service import (
     verify_otp,
 )
 from app.config.settings import get_settings
+from app.config.database import get_collection
 
 
 settings = get_settings()
 
 router = APIRouter(tags=["auth"])
-
 
 @router.post("/auth/rescue/register")
 async def rescue_register(payload: RegisterRequest):

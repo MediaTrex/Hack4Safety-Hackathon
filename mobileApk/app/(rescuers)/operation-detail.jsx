@@ -8,7 +8,7 @@ import {
     Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useLocalSearchParams, router } from "expo-router";
+import { useLocalSearchParams, router , useRouter} from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
 // ── Severity config ────────────────────────────────────────────────────────────
@@ -32,10 +32,7 @@ function generateMissionId(id, type) {
 // ── Section Card ───────────────────────────────────────────────────────────────
 function SectionCard({ children }) {
     return (
-        <View
-            className="bg-white rounded-2xl px-6 py-6 mb-5 shadow-[0_4px_8px_rgba(0,0,0,0.15)] border border-slate-300"
-           
-        >
+        <View className="bg-white rounded-2xl px-6 py-6 mb-5 shadow-[0_4px_8px_rgba(0,0,0,0.15)] border border-slate-300">
             {children}
         </View>
     );
@@ -47,7 +44,9 @@ function SectionRow({ label, value, isLast }) {
             <Text className="text-[15px] text-gray-600 font-medium mb-1">
                 {label}
             </Text>
-            <Text className="text-[13px] font-semibold text-gray-800">{value}</Text>
+            <Text className="text-[13px] font-semibold text-gray-800">
+                {value}
+            </Text>
         </View>
     );
 }
@@ -55,7 +54,7 @@ function SectionRow({ label, value, isLast }) {
 // ── Main Screen ────────────────────────────────────────────────────────────────
 export default function OperationDetailScreen() {
     const params = useLocalSearchParams();
-
+    let uRouter = useRouter();
     // Parse detail — passed as JSON string or individual params
     let detail;
     try {
@@ -82,10 +81,10 @@ export default function OperationDetailScreen() {
 
     // ── Actions ────────────────────────────────────────────────────────────────
     const handleNavigate = () => {
-        const url = `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`;
-        Linking.openURL(url).catch(() =>
-            Alert.alert("Error", "Could not open maps."),
-        );
+        uRouter.push({
+            pathname: "/(rescuers)/navigation",
+            params: { lat: latitude, lng: longitude},
+        });
     };
 
     const handleCall = () => {

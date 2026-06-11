@@ -12,6 +12,7 @@ from app.routes.notifications_ws_routes import router as notifications_ws_router
 from app.routes.admin_dashboard_ws_routes import router as admin_dashboard_ws_router
 from app.routes.dashboard_routes import router as dashboard_router
 from app.routes.mission_routes import router as mission_router
+from app.routes.admin_broadcast_ws_routes import router as admin_broadcast_ws_router
 
 
 settings = get_settings()
@@ -49,7 +50,7 @@ app.include_router(assign_operations_router)
 app.include_router(rescue_team_location_ws_router)
 app.include_router(geospatial_router)
 app.include_router(notifications_ws_router)
-app.include_router(admin_dashboard_ws_router)
+app.include_router(admin_broadcast_ws_router)
 app.include_router(dashboard_router)
 app.include_router(mission_router)
 

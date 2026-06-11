@@ -127,26 +127,34 @@ class NotificationManager:
         for team_id in team_ids:
             await self._send_notification(team_id, notification)
     
-    async def _send_notification(self, team_id: str, notification: dict):
-        """Send notification to a team via WebSocket or queue if offline."""
-        if team_id not in self.team_connections or not self.team_connections[team_id]:
-            # Team is offline, queue the notification
-            if team_id not in self.pending_notifications:
-                self.pending_notifications[team_id] = []
-            self.pending_notifications[team_id].append(notification)
-            return
-        
-        # Team is online, send to all connections
-        dead_connections = []
-        for ws in self.team_connections[team_id]:
-            try:
-                await ws.send_json(notification)
-            except Exception:
-                dead_connections.append(ws)
-        
-        # Clean up dead connections
-        for ws in dead_connections:
-            self.disconnect(team_id, ws)
+    async def broadcast_message(self, notification: dict):
+        """Broadcast a generic notification to all connected teams and citizens."""
+        # Broadcast to team connections
+        for team_id, connections in list(self.team_connections.items()):
+            dead_connections = []
+            for ws in connections:
+                try:
+                    await ws.send_json(notification)
+                except Exception:
+                    dead_connections.append(ws)
+            for ws in dead_connections:
+                self.disconnect(team_id, ws)
+        # Broadcast to citizens via citizen_manager
+        from app.services.citizen_manager import citizen_manager
+        await citizen_manager.broadcast_message(notification)
+
+        """Broadcast a generic notification to all connected teams and citizens."""
+        # Iterate over all connections across all team IDs
+        for team_id, connections in list(self.team_connections.items()):
+            dead_connections = []
+            for ws in connections:
+                try:
+                    await ws.send_json(notification)
+                except Exception:
+                    dead_connections.append(ws)
+            # Clean up dead connections
+            for ws in dead_connections:
+                self.disconnect(team_id, ws)
     
     async def broadcast_to_admin(self, notification: dict):
         """

@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ScreenWrapper from "../../../components/ScreenWrapper";
-import { router } from "expo-router";
+import { router, useRouter } from "expo-router";
 
 // ── Icons ──────────────────────────────────────────────────────────────────────
 const Icons = {
@@ -163,6 +163,7 @@ function FilterTab({ label, active, onPress }) {
 
 // ── Operation card ─────────────────────────────────────────────────────────────
 function OperationCard({ item }) {
+    let router = useRouter();
     const badge =
         SEVERITY_BADGE[item.severity.toLowerCase()] ?? SEVERITY_BADGE.Low;
     const iconBg =
@@ -170,7 +171,17 @@ function OperationCard({ item }) {
     // console.log();
 
     return (
-        <View
+        <TouchableOpacity
+            activeOpacity={0.9}
+            onPress={() => {
+                router.push({
+                    pathname: `/(rescuers)/operation-detail/`,
+                    params: {
+                        detail: JSON.stringify(item),
+                    },
+                });
+            }}
+            key={item.id}
             className="bg-white rounded-2xl px-4 py-4 mb-3 mx-4"
             style={{
                 elevation: 1,
@@ -234,7 +245,7 @@ function OperationCard({ item }) {
                     </View>
                 </View>
             </View>
-        </View>
+        </TouchableOpacity>
     );
 }
 

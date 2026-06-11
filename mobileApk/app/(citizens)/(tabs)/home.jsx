@@ -12,10 +12,20 @@ import ScreenWrapper from "../../../components/ScreenWrapper";
 
 export default function HomeScreen() {
     let { logoutCitizen } = useAuth();
+    let hour = new Date().getHours();
+    const greeting =
+        hour < 12
+            ? "Good Morning,"
+            : hour < 17
+              ? "Good Afternoon,"
+              : "Good Evening,";
 
     return (
         <ScreenWrapper>
-            <ScrollView contentContainerStyle={{ flexGrow: 1 , }} showsVerticalScrollIndicator={false}>
+            <ScrollView
+                contentContainerStyle={{ flexGrow: 1 }}
+                showsVerticalScrollIndicator={false}
+            >
                 <View className="flex-1 bg-white">
                     {/* Header */}
                     <View className="px-5 pt-4">
@@ -34,7 +44,11 @@ export default function HomeScreen() {
                                     />
                                 </TouchableOpacity>
 
-                                <TouchableOpacity  onPress={() => router.push("/(citizens)/alerts")}>
+                                <TouchableOpacity
+                                    onPress={() =>
+                                        router.push("/(citizens)/alerts")
+                                    }
+                                >
                                     <Ionicons
                                         name="notifications-outline"
                                         size={28}
@@ -52,7 +66,7 @@ export default function HomeScreen() {
                         {/* Greeting */}
                         <View className="mt-7">
                             <Text className="text-black text-[17px] font-semibold">
-                                Good Evening,
+                                {greeting}
                             </Text>
                             <Text className="text-3xl font-bold text-gray-900">
                                 Citizen
@@ -104,7 +118,7 @@ export default function HomeScreen() {
                                         />
                                     }
                                     label="Report Incident"
-                                    link='/(citizens)/report-incident'
+                                    link="/(citizens)/report-incident"
                                 />
 
                                 <QuickAction
@@ -138,7 +152,7 @@ export default function HomeScreen() {
                                         />
                                     }
                                     label="Emergency Contacts"
-                                    link='/(citizens)/helpline'
+                                    link="/(citizens)/helpline"
                                 />
                             </View>
                         </View>
@@ -221,7 +235,7 @@ export default function HomeScreen() {
     );
 }
 
-function QuickAction({ icon, label , link}) {
+function QuickAction({ icon, label, link }) {
     return (
         <TouchableOpacity
             className="w-[22%] items-center border border-gray-200 rounded-2xl p-3 gap-2"

@@ -80,6 +80,7 @@ export default function HomeScreen() {
                         <TouchableOpacity
                             activeOpacity={0.9}
                             className="bg-red-500 rounded-3xl mt-6 p-10 flex-row items-center shadow-[0_4px_8px_rgba(255,200,20,0.55)]"
+                            onPress={() => router.push("/(citizens)/sos")}
                         >
                             <View className="w-26 h-26 rounded-full bg-red-400 items-center justify-center">
                                 <MaterialCommunityIcons
@@ -97,7 +98,7 @@ export default function HomeScreen() {
                                     Emergency
                                 </Text>
                                 <Text className="text-red-100 text-base mt-1">
-                                    Tap to send SOS alert
+                                    Tap to goto SOS alert screen
                                 </Text>
                             </View>
                         </TouchableOpacity>
@@ -130,24 +131,25 @@ export default function HomeScreen() {
                                         />
                                     }
                                     label="Live Disaster Map"
+                                    link="/(citizens)/map"
                                 />
 
                                 <QuickAction
                                     icon={
-                                        <Ionicons
-                                            name="home"
-                                            size={39}
-                                            color="#7c3aed"
+                                        <MaterialCommunityIcons
+                                            name="alarm-light-outline"
+                                            size={50}
+                                            color="red"
                                         />
                                     }
-                                    label="Nearby Shelters"
+                                    label="Track your SOS"
                                 />
 
                                 <QuickAction
                                     icon={
                                         <Feather
                                             name="phone-call"
-                                            size={39}
+                                            size={40}
                                             color="#dc2626"
                                         />
                                     }
@@ -164,7 +166,9 @@ export default function HomeScreen() {
                                     Active Alerts Near You
                                 </Text>
 
-                                <TouchableOpacity>
+                                <TouchableOpacity
+                                    onPress={() => router.push("/(citizens)/alerts")}
+                                >
                                     <Text className="text-blue-600 font-medium">
                                         View All
                                     </Text>

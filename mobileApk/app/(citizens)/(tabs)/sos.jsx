@@ -8,14 +8,16 @@ import {
     TextInput,
     ScrollView,
     Animated,
-    Alert,
     StatusBar,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ScreenWrapper from "../../../components/ScreenWrapper";
 import { useAppContext } from "../../../context/AppContext";
-import { useFocusEffect } from "expo-router";
-// ── Emergency types config ────────────────────────────────────────────────────
+import { useFocusEffect, router } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import Toast from "react-native-toast-message";
+
+// ── Emergency types config ─────────────────────────────────────────────────────
 const EMERGENCY_TYPES = [
     { label: "Flood", icon: "🌊" },
     { label: "Landslide", icon: "⛰️" },
@@ -24,7 +26,7 @@ const EMERGENCY_TYPES = [
     { label: "Other", icon: "➕" },
 ];
 
-// ── Pulse ring ────────────────────────────────────────────────────────────────
+// ── Pulse ring ─────────────────────────────────────────────────────────────────
 function PulseRing({ delay = 0 }) {
     const scale = useRef(new Animated.Value(1)).current;
     const opacity = useRef(new Animated.Value(0.7)).current;
@@ -71,24 +73,22 @@ function PulseRing({ delay = 0 }) {
     );
 }
 
-// ── Main screen ───────────────────────────────────────────────────────────────
-export default function SOSScreen({ navigation }) {
-    let {
+// ── Main screen ────────────────────────────────────────────────────────────────
+export default function SOSScreen() {
+    const {
         latitude,
         longitude,
         address,
         accuracy,
         permissionStatus,
-        isLoading,
-        error,
         requestPermission,
     } = useAppContext();
 
     function openAppSettings() {
         if (Platform.OS === "ios") {
-            Linking.openURL("app-settings:"); // iOS opens app settings directly
+            Linking.openURL("app-settings:");
         } else {
-            Linking.openSettings(); // Android opens app settings
+            Linking.openSettings();
         }
     }
 
@@ -100,7 +100,6 @@ export default function SOSScreen({ navigation }) {
             ) {
                 requestPermission();
             }
-            // cleanup if needed
             return () => {};
         }, [permissionStatus, requestPermission]),
     );
@@ -113,55 +112,152 @@ export default function SOSScreen({ navigation }) {
         emergencyType: "Flood",
         phoneNumber: "",
         details: "",
-        location: {
-            city: address.city,
-            region: address.region,
-            lat: latitude,
-            lng: longitude,
-            accuracy,
-        },
     });
-
     const [sending, setSending] = useState(false);
 
-    const selectType = (label) => {
-        setFormData((prev) => ({ ...prev, emergencyType: label }));
+    const location = {
+        city: address?.city,
+        region: address?.region,
+        lat: latitude,
+        lng: longitude,
+        accuracy,
     };
 
+    // ── Handle Send ──────────────────────────────────────────────────────────────
     const handleSend = async () => {
-        //request for permission if not granted
+        // 1. Permission check
         if (
             permissionStatus === "undetermined" ||
             permissionStatus === "denied"
-        )
+        ) {
             requestPermission();
+        }
 
-        if (!formData.emergencyType) {
-            Alert.alert("Select emergency type", "Pick an emergency type.");
+        // 2. Phone number required
+        if (!formData.phoneNumber || formData.phoneNumber.trim() === "") {
+            Toast.show({
+                type: "error",
+                text1: "Phone number required",
+                text2: "Please enter your phone number before sending.",
+            });
             return;
         }
+
+        // 3. Emergency type check (shouldn't happen but guard anyway)
+        if (!formData.emergencyType) {
+            Toast.show({
+                type: "error",
+                text1: "Select emergency type",
+                text2: "Please pick an emergency type.",
+            });
+            return;
+        }
+
         setSending(true);
         try {
-            await new Promise((r) => setTimeout(r, 1200));
-            Alert.alert(
-                "✅ Alert Sent",
-                "Emergency services have been notified.",
+            // 4. Build alert object
+            const newAlert = {
+                id: Date.now().toString(),
+                sentAt: new Date().toISOString(),
+                type: formData.emergencyType.toLowerCase(),
+                phoneNumber: formData.phoneNumber.trim(),
+                additionalDetail: formData.details.trim() || null,
+                latitude: latitude ?? null,
+                longitude: longitude ?? null,
+                address: {
+                    city: address?.city ?? null,
+                    state: address?.region ?? null,
+                },
+            };
+
+            // 5. TODO: send to your backend here
+            // await api.post("/sos", newAlert);
+            // get data from api
+            //             {
+            //   "_id": "ObjectId('6a2959146933a38e2a70520a')",
+            //   "operation_id": "OS-2026-06-10-1",
+            //   "sos_id": "6a2959136933a38e2a705209",
+            //   "assignId": "6a29583e6933a38e2a705207",
+            //   "sos_location": {
+            //     "type": "Point",
+            //     "coordinates": [
+            //       56.0449,
+            //       61.8672
+            //     ]
+            //   },
+            //   "rescue_team_location": {   type:"point" , coordinates:[22.3567 , 33.4876]  },
+            //   "status": "assigned",
+            //   "taskStatus": "accepted",
+            //   "created_at": "2026-06-10T12:31:16.464+00:00",
+            //   "updated_at": "2026-06-10T13:11:28.942+00:00"
+            // }
+
+            //modify the newAlert data with api data
+            let newData = {
+                ...newAlert,
+                operationDetail: {
+                    _id: "ObjectId('6a2959146933a38e2a70520a')",
+                    operation_id: "OS-2026-06-10-1",
+                    sos_id: "6a2959136933a38e2a705209",
+                    assignId: "6a29583e6933a38e2a705207",
+                    sos_location: {
+                        type: "Point",
+                        coordinates: [56.0449, 61.8672],
+                    },
+                    rescue_team_location: {
+                        type: "point",
+                        coordinates: [22.3, 33.4],
+                    },
+                    status: "assigned",
+                    taskStatus: "accepted",
+                    created_at: "2026-06-10T12:31:16.464+00:00",
+                    updated_at: "2026-06-10T13:11:28.942+00:00",
+                },
+            };
+
+            // 6. Save to AsyncStorage
+            const raw = await AsyncStorage.getItem("alerts");
+            const existing = raw ? JSON.parse(raw) : [];
+            await AsyncStorage.setItem(
+                "alerts",
+                JSON.stringify([...existing, newData]),
             );
-        } catch {
-            Alert.alert("Failed", "Could not send alert. Try again.");
+
+            // 7. Success toast
+            Toast.show({
+                type: "success",
+                text1: "Alert Sent ✅",
+                text2: "Emergency services have been notified.",
+            });
+
+            // 8. Reset form
+            setFormData({
+                emergencyType: "Flood",
+                phoneNumber: "",
+                details: "",
+            });
+
+            // 9. Navigate to tracking screen
+            router.push("/(citizens)/track-your-SOSs");
+        } catch (err) {
+            console.error("SOS send error:", err);
+            Toast.show({
+                type: "error",
+                text1: "Failed to send",
+                text2: "Could not send alert. Please try again.",
+            });
         } finally {
             setSending(false);
         }
     };
 
-    const { location } = formData;
-
+    // ── Render ───────────────────────────────────────────────────────────────────
     return (
         <ScreenWrapper>
-            <View className={`flex-1 bg-white }`}>
+            <View className="flex-1 bg-white">
                 <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
 
-                {/* ── Header ─────────────────────────────────────────────────────────── */}
+                {/* Header */}
                 <View className="flex-row items-center px-4 py-3 border-b border-gray-100">
                     <Text className="flex-1 text-center text-2xl font-bold text-gray-900">
                         SOS Emergency
@@ -177,18 +273,14 @@ export default function SOSScreen({ navigation }) {
                     keyboardShouldPersistTaps="handled"
                     showsVerticalScrollIndicator={false}
                 >
-                    {/* ── SOS Button ───────────────────────────────────────────────────── */}
+                    {/* SOS Button */}
                     <View className="items-center justify-center py-10">
                         <View className="w-44 h-44 items-center justify-center">
                             <PulseRing delay={0} />
                             <PulseRing delay={600} />
                             <TouchableOpacity
-                                onPress={() =>
-                                    Alert.alert(
-                                        "SOS Activated",
-                                        "Tap SEND ALERT to dispatch emergency services.",
-                                    )
-                                }
+                                onPress={handleSend}
+                                disabled={sending}
                                 activeOpacity={0.82}
                                 className="w-44 h-44 rounded-full bg-red-500 items-center justify-center"
                                 style={{
@@ -209,7 +301,7 @@ export default function SOSScreen({ navigation }) {
                         </View>
                     </View>
 
-                    {/* ── Location card ────────────────────────────────────────────────── */}
+                    {/* Location card */}
                     <View
                         className="flex-row items-start bg-white border border-gray-200 rounded-2xl p-6 mb-6"
                         style={{
@@ -220,14 +312,12 @@ export default function SOSScreen({ navigation }) {
                             elevation: 2,
                         }}
                     >
-                        <View className=" items-center justify-center mr-3 mt-0.5 gap-2">
-                            <Text className="">
-                                <Ionicons
-                                    name="location-sharp"
-                                    color="blue"
-                                    size={30}
-                                />
-                            </Text>
+                        <View className="items-center justify-center mr-3 mt-0.5 gap-2">
+                            <Ionicons
+                                name="location-sharp"
+                                color="blue"
+                                size={30}
+                            />
                         </View>
                         <View className="flex-1 gap-1">
                             <Text className="text-[18px] text-slate-500 font-medium mb-0.5">
@@ -238,22 +328,20 @@ export default function SOSScreen({ navigation }) {
                                 {location.region || "---"}
                             </Text>
                             <Text className="text-[16px] text-gray-700 mt-0.5">
-                                {Math.ceil(location.lat * 10000) / 10000 ||
-                                    "---"}
+                                {Math.ceil((location.lat ?? 0) * 10000) / 10000}
                                 ° N,{" "}
-                                {Math.ceil(location.lng * 10000) / 10000 ||
-                                    "---"}
+                                {Math.ceil((location.lng ?? 0) * 10000) / 10000}
                                 ° E
                             </Text>
                             <Text className="text-[15px] text-green-600 font-semibold mt-1">
                                 📡 Accuracy:{" "}
-                                {Math.ceil(location.accuracy * 10) / 10 || "0"}{" "}
+                                {Math.ceil((location.accuracy ?? 0) * 10) / 10}{" "}
                                 m
                             </Text>
                         </View>
                     </View>
 
-                    {/* ── Emergency Type ───────────────────────────────────────────────── */}
+                    {/* Emergency Type */}
                     <Text className="text-xl font-bold text-gray-900 mb-3">
                         Emergency Type
                     </Text>
@@ -263,7 +351,12 @@ export default function SOSScreen({ navigation }) {
                             return (
                                 <TouchableOpacity
                                     key={label}
-                                    onPress={() => selectType(label)}
+                                    onPress={() =>
+                                        setFormData((prev) => ({
+                                            ...prev,
+                                            emergencyType: label,
+                                        }))
+                                    }
                                     activeOpacity={0.75}
                                     className={`items-center justify-center px-2 flex-1 py-2.5 rounded-xl border-2 min-w-16 relative ${
                                         selected
@@ -275,7 +368,11 @@ export default function SOSScreen({ navigation }) {
                                         {icon}
                                     </Text>
                                     <Text
-                                        className={`text-xs font-semibold ${selected ? "text-blue-700" : "text-gray-500"}`}
+                                        className={`text-xs font-semibold ${
+                                            selected
+                                                ? "text-blue-700"
+                                                : "text-gray-500"
+                                        }`}
                                     >
                                         {label}
                                     </Text>
@@ -291,7 +388,7 @@ export default function SOSScreen({ navigation }) {
                         })}
                     </View>
 
-                    {/* phone number */}
+                    {/* Phone Number */}
                     <Text className="text-xl font-bold text-gray-900 mb-3">
                         Phone Number
                     </Text>
@@ -299,13 +396,17 @@ export default function SOSScreen({ navigation }) {
                         className="border border-gray-200 rounded-2xl p-4 text-base text-gray-800 bg-gray-50 mb-6"
                         placeholder="Enter your phone number"
                         placeholderTextColor="#9CA3AF"
-                        value={formData.phone}
+                        keyboardType="phone-pad"
+                        value={formData.phoneNumber}
                         onChangeText={(text) =>
-                            setFormData((prev) => ({ ...prev, phone: text }))
+                            setFormData((prev) => ({
+                                ...prev,
+                                phoneNumber: text,
+                            }))
                         }
                     />
 
-                    {/* ── Additional details ───────────────────────────────────────────── */}
+                    {/* Additional Details */}
                     <Text className="text-xl font-bold text-gray-900 mb-3">
                         Additional Details{" "}
                         <Text className="text-gray-400 font-normal text-sm">
@@ -325,12 +426,14 @@ export default function SOSScreen({ navigation }) {
                         }
                     />
 
-                    {/* ── Send button ──────────────────────────────────────────────────── */}
+                    {/* Send button */}
                     <TouchableOpacity
                         onPress={handleSend}
                         disabled={sending}
                         activeOpacity={0.85}
-                        className={`mt-7 rounded-2xl py-4 items-center ${sending ? "bg-blue-300" : "bg-blue-600"}`}
+                        className={`mt-7 rounded-2xl py-4 items-center ${
+                            sending ? "bg-blue-300" : "bg-blue-600"
+                        }`}
                     >
                         <Text className="text-white text-base font-extrabold tracking-widest">
                             {sending ? "SENDING…" : "SEND ALERT"}

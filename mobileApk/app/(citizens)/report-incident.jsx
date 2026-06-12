@@ -22,8 +22,8 @@ import {
 } from "expo-audio";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import * as FileSystem from "expo-file-system/legacy";
 import { SafeAreaView } from "react-native-safe-area-context";
+import * as FileSystem from "expo-file-system/legacy";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const INCIDENT_TYPES = ["Flood", "Landslide", "Accident", "Fire", "Other"];
@@ -186,23 +186,38 @@ function VoiceRecorder({ recordingUri, recordingDuration, onChange }) {
     const handleStopRecording = async () => {
         try {
             await audioRecorder.stop();
-            // uri is now available on audioRecorder.uri
-            const base64 = await FileSystem.readAsStringAsync(
-                audioRecorder.uri,
-                {
-                    encoding: FileSystem.EncodingType.Base64,
-                },
-            );
+            await setAudioModeAsync({ allowsRecording: false });
 
             if (audioRecorder.uri) {
+                const uri = audioRecorder.uri;
+
+                // ✅ XMLHttpRequest handles file:// on Android where fetch/blob fails
+                const base64 = await new Promise((resolve, reject) => {
+                    const xhr = new XMLHttpRequest();
+                    xhr.onload = () => {
+                        const reader = new FileReader();
+                        reader.onloadend = () => {
+                            const full = reader.result;
+                            const raw = full.split(",")[1]; // strips "data:audio/m4a;base64,"
+                            resolve(raw);
+                        };
+                        reader.onerror = reject;
+                        reader.readAsDataURL(xhr.response);
+                    };
+                    xhr.onerror = reject;
+                    xhr.responseType = "blob";
+                    xhr.open("GET", uri, true);
+                    xhr.send();
+                });
+
                 onChange({
-                    uri: audioRecorder.uri,
+                    uri, // ✅ used for playback only
+                    base64, // ✅ used for sending (full data URI string)
                     duration: elapsedSecs,
-                    base64,
                 });
             }
-            await setAudioModeAsync({ allowsRecording: false });
-        } catch {
+        } catch (e) {
+            console.error("Stop recording error:", e);
             Alert.alert("Error", "Could not stop recording.");
         }
     };
@@ -368,23 +383,8 @@ export default function ReportIncidentScreen() {
             selectionLimit: MAX_PHOTOS - photos.length,
         });
         if (!result.canceled) {
-            const newPhotos = await Promise.all(
-                result.assets.map(async (asset) => {
-                    const base64 = await FileSystem.readAsStringAsync(
-                        asset.uri,
-                        {
-                            encoding: FileSystem.EncodingType.Base64,
-                        },
-                    );
-
-                    return {
-                        uri: asset.uri,
-                        base64,
-                    };
-                }),
-            );
-
-            setValue("photos", [...photos, ...newPhotos].slice(0, MAX_PHOTOS));
+            const newUris = result.assets.map((a) => a.uri);
+            setValue("photos", [...photos, ...newUris].slice(0, MAX_PHOTOS));
         }
     };
 
@@ -396,23 +396,50 @@ export default function ReportIncidentScreen() {
     };
 
     // ── Submit ────────────────────────────────────────────────────────────────
-    const onSubmit = (data) => {
-        const payload = {
-            incidentType: data.incidentType,
-            description: data.description,
+    const onSubmit = async (data) => {
+        try {
+            const photosWithBase64 = await Promise.all(
+                data.photos.map(async (photoUri, i) => {
+                    const destUri =
+                        FileSystem.documentDirectory + `photo_temp_${i}.jpg`;
+                    try {
+                        await FileSystem.copyAsync({
+                            from: photoUri,
+                            to: destUri,
+                        });
 
-            photos: data.photos.map((photo) => ({
-                base64: photo.base64,
-            })),
+                        const base64 = await FileSystem.readAsStringAsync(
+                            destUri,
+                            {
+                                encoding: FileSystem.EncodingType.Base64,
+                            },
+                        );
 
-            voice: data.voiceMessage
-                ? {
-                      base64: data.voiceMessage.base64,
-                  }
-                : null,
-        };
+                        await FileSystem.deleteAsync(destUri, {
+                            idempotent: true,
+                        });
+                        return { base64 };
+                    } catch (err) {
+                        console.warn(`Photo ${i} read failed:`, err);
+                        return { base64: null };
+                    }
+                }),
+            );
 
-        // console.log("payload", JSON.stringify(payload, null, 2));
+            const payload = {
+                incidentType: data.incidentType,
+                description: data.description,
+                photos: photosWithBase64,
+                voice: data.voiceMessage?.base64
+                    ? { base64: data.voiceMessage.base64 }
+                    : null,
+            };
+
+            console.log(payload.photos[0].base64.slice(0, 100));
+        } catch (e) {
+            console.error("Submit error:", e);
+            Alert.alert("Error", "Failed to prepare report. Please try again.");
+        }
     };
 
     const onError = (errs) => {
@@ -565,10 +592,10 @@ export default function ReportIncidentScreen() {
 
                         <View className="flex-row items-center flex-wrap">
                             {/* First 3 thumbnails */}
-                            {photos.slice(0, 3).map((photo, index) => (
+                            {photos.slice(0, 3).map((uri, index) => (
                                 <PhotoThumb
-                                    key={`${photo.uri}-${index}`}
-                                    uri={photo.uri}
+                                    key={`${uri}-${index}`}
+                                    uri={uri}
                                     index={index}
                                     onRemove={removePhoto}
                                 />

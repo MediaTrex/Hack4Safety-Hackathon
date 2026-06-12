@@ -12,10 +12,20 @@ import ScreenWrapper from "../../../components/ScreenWrapper";
 
 export default function HomeScreen() {
     let { logoutCitizen } = useAuth();
+    let hour = new Date().getHours();
+    const greeting =
+        hour < 12
+            ? "Good Morning,"
+            : hour < 17
+              ? "Good Afternoon,"
+              : "Good Evening,";
 
     return (
         <ScreenWrapper>
-            <ScrollView contentContainerStyle={{ flexGrow: 1 , }} showsVerticalScrollIndicator={false}>
+            <ScrollView
+                contentContainerStyle={{ flexGrow: 1 }}
+                showsVerticalScrollIndicator={false}
+            >
                 <View className="flex-1 bg-white">
                     {/* Header */}
                     <View className="px-5 pt-4">
@@ -34,7 +44,11 @@ export default function HomeScreen() {
                                     />
                                 </TouchableOpacity>
 
-                                <TouchableOpacity  onPress={() => router.push("/(citizens)/alerts")}>
+                                <TouchableOpacity
+                                    onPress={() =>
+                                        router.push("/(citizens)/alerts")
+                                    }
+                                >
                                     <Ionicons
                                         name="notifications-outline"
                                         size={28}
@@ -52,7 +66,7 @@ export default function HomeScreen() {
                         {/* Greeting */}
                         <View className="mt-7">
                             <Text className="text-black text-[17px] font-semibold">
-                                Good Evening,
+                                {greeting}
                             </Text>
                             <Text className="text-3xl font-bold text-gray-900">
                                 Citizen
@@ -66,6 +80,7 @@ export default function HomeScreen() {
                         <TouchableOpacity
                             activeOpacity={0.9}
                             className="bg-red-500 rounded-3xl mt-6 p-10 flex-row items-center shadow-[0_4px_8px_rgba(255,200,20,0.55)]"
+                            onPress={() => router.push("/(citizens)/sos")}
                         >
                             <View className="w-26 h-26 rounded-full bg-red-400 items-center justify-center">
                                 <MaterialCommunityIcons
@@ -83,7 +98,7 @@ export default function HomeScreen() {
                                     Emergency
                                 </Text>
                                 <Text className="text-red-100 text-base mt-1">
-                                    Tap to send SOS alert
+                                    Tap to goto SOS alert screen
                                 </Text>
                             </View>
                         </TouchableOpacity>
@@ -104,7 +119,7 @@ export default function HomeScreen() {
                                         />
                                     }
                                     label="Report Incident"
-                                    link='/(citizens)/report-incident'
+                                    link="/(citizens)/report-incident"
                                 />
 
                                 <QuickAction
@@ -116,29 +131,31 @@ export default function HomeScreen() {
                                         />
                                     }
                                     label="Live Disaster Map"
+                                    link="/(citizens)/map"
                                 />
 
                                 <QuickAction
                                     icon={
-                                        <Ionicons
-                                            name="home"
-                                            size={39}
-                                            color="#7c3aed"
+                                        <MaterialCommunityIcons
+                                            name="alarm-light-outline"
+                                            size={50}
+                                            color="red"
                                         />
                                     }
-                                    label="Nearby Shelters"
+                                    label="Track your SOS"
+                                    link="/(citizens)/track-your-SOSs"
                                 />
 
                                 <QuickAction
                                     icon={
                                         <Feather
                                             name="phone-call"
-                                            size={39}
+                                            size={40}
                                             color="#dc2626"
                                         />
                                     }
                                     label="Emergency Contacts"
-                                    link='/(citizens)/helpline'
+                                    link="/(citizens)/helpline"
                                 />
                             </View>
                         </View>
@@ -150,7 +167,9 @@ export default function HomeScreen() {
                                     Active Alerts Near You
                                 </Text>
 
-                                <TouchableOpacity>
+                                <TouchableOpacity
+                                    onPress={() => router.push("/(citizens)/alerts")}
+                                >
                                     <Text className="text-blue-600 font-medium">
                                         View All
                                     </Text>
@@ -221,7 +240,7 @@ export default function HomeScreen() {
     );
 }
 
-function QuickAction({ icon, label , link}) {
+function QuickAction({ icon, label, link }) {
     return (
         <TouchableOpacity
             className="w-[22%] items-center border border-gray-200 rounded-2xl p-3 gap-2"

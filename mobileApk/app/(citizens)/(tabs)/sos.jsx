@@ -172,13 +172,55 @@ export default function SOSScreen() {
 
             // 5. TODO: send to your backend here
             // await api.post("/sos", newAlert);
+            // get data from api
+            //             {
+            //   "_id": "ObjectId('6a2959146933a38e2a70520a')",
+            //   "operation_id": "OS-2026-06-10-1",
+            //   "sos_id": "6a2959136933a38e2a705209",
+            //   "assignId": "6a29583e6933a38e2a705207",
+            //   "sos_location": {
+            //     "type": "Point",
+            //     "coordinates": [
+            //       56.0449,
+            //       61.8672
+            //     ]
+            //   },
+            //   "rescue_team_location": {   type:"point" , coordinates:[22.3567 , 33.4876]  },
+            //   "status": "assigned",
+            //   "taskStatus": "accepted",
+            //   "created_at": "2026-06-10T12:31:16.464+00:00",
+            //   "updated_at": "2026-06-10T13:11:28.942+00:00"
+            // }
+
+            //modify the newAlert data with api data
+            let newData = {
+                ...newAlert,
+                operationDetail: {
+                    _id: "ObjectId('6a2959146933a38e2a70520a')",
+                    operation_id: "OS-2026-06-10-1",
+                    sos_id: "6a2959136933a38e2a705209",
+                    assignId: "6a29583e6933a38e2a705207",
+                    sos_location: {
+                        type: "Point",
+                        coordinates: [56.0449, 61.8672],
+                    },
+                    rescue_team_location: {
+                        type: "point",
+                        coordinates: [22.3, 33.4],
+                    },
+                    status: "assigned",
+                    taskStatus: "accepted",
+                    created_at: "2026-06-10T12:31:16.464+00:00",
+                    updated_at: "2026-06-10T13:11:28.942+00:00",
+                },
+            };
 
             // 6. Save to AsyncStorage
             const raw = await AsyncStorage.getItem("alerts");
             const existing = raw ? JSON.parse(raw) : [];
             await AsyncStorage.setItem(
                 "alerts",
-                JSON.stringify([...existing, newAlert]),
+                JSON.stringify([...existing, newData]),
             );
 
             // 7. Success toast

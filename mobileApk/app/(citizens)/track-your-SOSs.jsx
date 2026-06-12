@@ -167,8 +167,8 @@ export default function MyAlertsScreen() {
 
     function handleCardPress(item) {
         router.push({
-            pathname: "/alert-tracking",
-            params: { alert: JSON.stringify(item) },
+            pathname: "/(citizens)/rescue-tracking",
+            params: { operation : JSON.stringify(item.operationDetail) },
         });
     }
 

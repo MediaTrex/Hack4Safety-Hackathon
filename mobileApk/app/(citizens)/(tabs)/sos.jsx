@@ -16,6 +16,7 @@ import { useAppContext } from "../../../context/AppContext";
 import { useFocusEffect, router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-toast-message";
+import api from "../../../api/api";
 
 // ── Emergency types config ─────────────────────────────────────────────────────
 const EMERGENCY_TYPES = [
@@ -170,8 +171,21 @@ export default function SOSScreen() {
                 },
             };
 
+            const dataToSend = {
+                location: {
+                    type: "Point",
+                    coordinates: [newAlert.longitude, newAlert.latitude],
+                },
+                address: `${newAlert.address.city}, ${newAlert.address.state}`,
+                emergency_type: `${newAlert.type}`,
+                mobile_no: `${newAlert.phoneNumber}`,
+                additional_details: `${newAlert.additionalDetail}`,
+            };
+
             // 5. TODO: send to your backend here
-            // await api.post("/sos", newAlert);
+            let { data } = await api.post("/sos", dataToSend);
+            // console.log(data);
+
             // get data from api
             //             {
             //   "_id": "ObjectId('6a2959146933a38e2a70520a')",
@@ -195,24 +209,7 @@ export default function SOSScreen() {
             //modify the newAlert data with api data
             let newData = {
                 ...newAlert,
-                operationDetail: {
-                    _id: "ObjectId('6a2959146933a38e2a70520a')",
-                    operation_id: "OS-2026-06-10-1",
-                    sos_id: "6a2959136933a38e2a705209",
-                    assignId: "6a29583e6933a38e2a705207",
-                    sos_location: {
-                        type: "Point",
-                        coordinates: [56.0449, 61.8672],
-                    },
-                    rescue_team_location: {
-                        type: "point",
-                        coordinates: [22.3, 33.4],
-                    },
-                    status: "assigned",
-                    taskStatus: "accepted",
-                    created_at: "2026-06-10T12:31:16.464+00:00",
-                    updated_at: "2026-06-10T13:11:28.942+00:00",
-                },
+                operationDetail: data.operation,
             };
 
             // 6. Save to AsyncStorage

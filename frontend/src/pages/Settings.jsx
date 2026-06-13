@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 
 const SETTING_CATS = [
-  { id: 'general', label: 'General Settings', icon: '⚙️' },
-  { id: 'map', label: 'Map Settings', icon: '🗺️' },
-  { id: 'alert', label: 'Alert Settings', icon: '🔔' },
-  { id: 'notification', label: 'Notification Settings', icon: '📱' },
-  { id: 'system', label: 'System Preferences', icon: '🖥️' },
-  { id: 'security', label: 'Security Settings', icon: '🔒' },
-  { id: 'language', label: 'Language Settings', icon: '🌐' },
-  { id: 'backup', label: 'Backup & Restore', icon: '💾' },
-  { id: 'api', label: 'API Integrations', icon: '🔗' },
+  { id: 'general', label: 'General Settings', icon: '' },
+  { id: 'map', label: 'Map Settings', icon: '' },
+  { id: 'alert', label: 'Alert Settings', icon: '' },
+  { id: 'notification', label: 'Notification Settings', icon: '' },
+  { id: 'system', label: 'System Preferences', icon: '' },
+  { id: 'security', label: 'Security Settings', icon: '' },
+  { id: 'language', label: 'Language Settings', icon: '' },
+  { id: 'backup', label: 'Backup & Restore', icon: '' },
+  { id: 'api', label: 'API Integrations', icon: '' },
 ];
 
 const Toggle = ({ defaultOn = false }) => {

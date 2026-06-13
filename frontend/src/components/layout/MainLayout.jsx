@@ -60,7 +60,7 @@ export default function MainLayout() {
       <Sidebar activePage={activePage} onNavigate={setActivePage} />
       <div className="flex-1 flex flex-col overflow-hidden">
         <Topbar title={pageInfo.title} subtitle={pageInfo.subtitle} />
-        <div className="flex-1 overflow-y-auto p-6 shadow-[inset_0_2px_8px_rgba(0,0,0,0.04)]">
+        <div className="flex-1 overflow-y-auto p-1 shadow-[inset_0_2px_8px_rgba(0,0,0,0.04)]">
           <div className="page-enter">
             <PageComponent onNavigate={setActivePage} />
           </div>

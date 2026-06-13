@@ -150,11 +150,11 @@ export default function Profile() {
               <h3 className="font-semibold text-sm text-gray-800 mb-3">My Statistics</h3>
               <div className="space-y-3">
                 {[
-                  { icon: '🏠', label: 'Operations Managed', value: 128 },
-                  { icon: '👥', label: 'Teams Supervised', value: 12 },
-                  { icon: '⚠️', label: 'Incidents Handled', value: 342 },
-                  { icon: '🔔', label: 'Active Alerts', value: 18 },
-                  { icon: '⏱️', label: 'Response Time (Avg)', value: '12 min' },
+                  { icon: '', label: 'Operations Managed', value: 128 },
+                  { icon: '', label: 'Teams Supervised', value: 12 },
+                  { icon: '', label: 'Incidents Handled', value: 342 },
+                  { icon: '', label: 'Active Alerts', value: 18 },
+                  { icon: '', label: 'Response Time (Avg)', value: '12 min' },
                 ].map(s => (
                   <div key={s.label} className="flex items-center justify-between py-1 border-b border-gray-50 last:border-0">
                     <div className="flex items-center gap-2">

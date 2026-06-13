@@ -21,6 +21,18 @@ const STATUS_STYLE = {
 };
 
 export default function Operations() {
+  const [search, setSearch] = useState("");
+    const [statusFilter, setStatusFilter] = useState("All Status");
+    const [typeFilter, setTypeFilter] = useState("All Types");
+  
+    const filtered = OPS.filter(
+      (i) =>
+        (search === "" ||
+          i.id.toLowerCase().includes(search.toLowerCase()) ||
+          i.location.toLowerCase().includes(search.toLowerCase())) &&
+        (typeFilter === "All Types" || i.type === typeFilter) &&
+        (statusFilter === "All Status" || i.status === statusFilter),
+    );
   return (
     <div className="flex flex-col h-full">
       <div className="flex-1 p-4 space-y-4 bg-[#f0f4f8]">
@@ -42,20 +54,61 @@ export default function Operations() {
         </div>
 
         <div className="bg-white rounded-xl shadow-card overflow-hidden">
-          <div className="flex items-center gap-3 p-4 border-b">
-            <div className="relative flex-1 max-w-xs">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">🔍</span>
-              <input placeholder="Search operations..." className="w-full pl-9 pr-4 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-blue-500" />
+
+           {/* Toolbar */}
+          <div className="flex gap-3 p-4 border-b">
+            <div className="relative max-w-xs">
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search incidents..."
+                className="w-full pl-2 pr-4 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-blue-500"
+              />
             </div>
-            <select className="text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white">
-              {['All Status','In Progress','On The Way','Assigned','Monitoring','Completed'].map(t=><option key={t}>{t}</option>)}
+            <select
+              value={typeFilter}
+              onChange={(e) => setTypeFilter(e.target.value)}
+              className="text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none"
+            >
+              {[
+                "All Types",
+                "Flood Rescue",
+                "Landslide Response",
+                "Accident Rescue",
+                "Crowd Management",
+                "Fire Response",
+              ].map((t) => (
+                <option key={t}>{t}</option>
+              ))}
             </select>
-            <select className="text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white">
-              {['All Types','Flood Rescue','Landslide Response','Accident Rescue','Fire Response','Crowd Management'].map(t=><option key={t}>{t}</option>)}
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none"
+            >
+              {[
+                "All Status",
+                "In Progress",
+                "On The Way",
+                "Rescue Started",
+                "Monitoring",
+                "Assigned",
+                "Rescue Completed",
+              ].map((t) => (
+                <option key={t}>{t}</option>
+              ))}
             </select>
-            <div className="text-sm text-gray-500 border border-gray-200 rounded-lg px-3 py-2">📅 May 16 – May 23, 2025</div>
-            <button className="ml-auto bg-[#1a3a6b] text-white text-sm px-4 py-2 rounded-lg hover:bg-[#0f2347]">＋ Create Operation</button>
+            <div className="flex items-center gap-2 ml-[100px]">
+              <div className="text-sm text-gray-500 border border-gray-200 rounded-lg px-3 py-2">
+                <input type="date" name="" id="" />
+              </div>
+              <span> - </span>
+              <div className="text-sm text-gray-500 border border-gray-200 rounded-lg px-3 py-2">
+                <input type="date" name="" id="" />
+              </div>
+            </div>
           </div>
+
           <table className="w-full">
             <thead className="bg-[#f8fafc] border-b border-gray-100">
               <tr>
@@ -65,7 +118,7 @@ export default function Operations() {
               </tr>
             </thead>
             <tbody className="divide-y">
-              {OPS.map(op=>(
+              {filtered.map(op=>(
                 <tr key={op.id} className="hover:bg-gray-50 transition">
                   <td className="px-4 py-3 text-xs text-blue-600 font-medium">{op.id}</td>
                   <td className="px-4 py-3 text-xs text-gray-700">{op.type}</td>

@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
     View,
     Text,
@@ -16,6 +16,8 @@ import {
 } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import ScreenWrapper from "../../../components/ScreenWrapper";
+import api from "../../../api/api";
+import { useAppContext } from "../../../context/AppContext";
 
 // ─── Alert type config ────────────────────────────────────────────────────────
 
@@ -66,168 +68,7 @@ const ALERT_TYPE_CONFIG = {
 
 // ─── Mock data — replace with your API response ───────────────────────────────
 
-const MOCK_ALERTS = [
-    {
-        id: "1",
-        type: "flood",
-        location: "Butwal, Rupandehi",
-        time: "2 min ago",
-        latitude: 27.7006,
-        longitude: 83.4532,
-    },
-    {
-        id: "2",
-        type: "landslide",
-        location: "Palpa, Tanaahu",
-        time: "15 min ago",
-        latitude: 27.8643,
-        longitude: 83.5474,
-    },
-    {
-        id: "3",
-        type: "fire",
-        location: "Pokhara, Kaski",
-        time: "32 min ago",
-        latitude: 28.2096,
-        longitude: 83.9856,
-    },
-    {
-        id: "4",
-        type: "accident",
-        location: "Narayanghat, Chitwan",
-        time: "1 hr ago",
-        latitude: 27.6933,
-        longitude: 84.4281,
-    },
-    {
-        id: "5",
-        type: "other",
-        location: "Hetauda, Makwanpur",
-        time: "2 hr ago",
-        latitude: 27.4289,
-        longitude: 85.0319,
-    },
-    {
-        id: "6",
-        type: "flood",
-        location: "Birgunj, Parsa",
-        time: "3 hr ago",
-        latitude: 27.0104,
-        longitude: 84.8772,
-    },
-    {
-        id: "7",
-        type: "fire",
-        location: "Dharan, Sunsari",
-        time: "3 hr ago",
-        latitude: 26.8127,
-        longitude: 87.2836,
-    },
-    {
-        id: "8",
-        type: "accident",
-        location: "Bhairahawa, Rupandehi",
-        time: "4 hr ago",
-        latitude: 27.5055,
-        longitude: 83.4536,
-    },
-    {
-        id: "9",
-        type: "landslide",
-        location: "Beni, Myagdi",
-        time: "5 hr ago",
-        latitude: 28.354,
-        longitude: 83.5727,
-    },
-    {
-        id: "10",
-        type: "flood",
-        location: "Janakpur, Dhanusha",
-        time: "6 hr ago",
-        latitude: 26.7288,
-        longitude: 85.9256,
-    },
-    {
-        id: "11",
-        type: "other",
-        location: "Biratnagar, Morang",
-        time: "7 hr ago",
-        latitude: 26.4831,
-        longitude: 87.2798,
-    },
-    {
-        id: "12",
-        type: "fire",
-        location: "Tulsipur, Dang",
-        time: "8 hr ago",
-        latitude: 28.1312,
-        longitude: 82.2956,
-    },
-    {
-        id: "13",
-        type: "accident",
-        location: "Kohalpur, Banke",
-        time: "9 hr ago",
-        latitude: 28.1984,
-        longitude: 81.7258,
-    },
-    {
-        id: "14",
-        type: "landslide",
-        location: "Baglung, Baglung",
-        time: "11 hr ago",
-        latitude: 28.2692,
-        longitude: 83.5876,
-    },
-    {
-        id: "15",
-        type: "flood",
-        location: "Kalaiya, Bara",
-        time: "13 hr ago",
-        latitude: 27.0335,
-        longitude: 85.0005,
-    },
-    {
-        id: "16",
-        type: "other",
-        location: "Itahari, Sunsari",
-        time: "14 hr ago",
-        latitude: 26.6649,
-        longitude: 87.2778,
-    },
-    {
-        id: "17",
-        type: "fire",
-        location: "Nepalgunj, Banke",
-        time: "16 hr ago",
-        latitude: 28.05,
-        longitude: 81.6167,
-    },
-    {
-        id: "18",
-        type: "accident",
-        location: "Damauli, Tanahun",
-        time: "18 hr ago",
-        latitude: 27.9614,
-        longitude: 84.2925,
-    },
-    {
-        id: "19",
-        type: "flood",
-        location: "Bardibas, Mahottari",
-        time: "20 hr ago",
-        latitude: 26.9769,
-        longitude: 85.9165,
-    },
-    {
-        id: "20",
-        type: "landslide",
-        location: "Waling, Syangja",
-        time: "22 hr ago",
-        latitude: 28.0742,
-        longitude: 83.7786,
-    },
-];
+
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -250,16 +91,58 @@ const openInMaps = (latitude, longitude) => {
 // ─── Alert Card Row ──────────────────────────────────────────────────────────
 
 function AlertRow({ item, isLast }) {
-    const config = ALERT_TYPE_CONFIG[item.type] ?? ALERT_TYPE_CONFIG.other;
-    const title = item.label ?? config.label;
+    function getTimeElapsed(timestamp) {
+        const date = new Date(timestamp);
+        const now = new Date();
+
+        const diffMs = now - date;
+        const diffSec = Math.floor(diffMs / 1000);
+
+        if (diffSec < 60) {
+            return `${diffSec}s ago`;
+        }
+
+        const diffMin = Math.floor(diffSec / 60);
+        if (diffMin < 60) {
+            return `${diffMin}m ago`;
+        }
+
+        const diffHr = Math.floor(diffMin / 60);
+        if (diffHr < 24) {
+            return `${diffHr}h ago`;
+        }
+
+        const diffDay = Math.floor(diffHr / 24);
+        if (diffDay < 30) {
+            return `${diffDay}d ago`;
+        }
+
+        const diffMonth = Math.floor(diffDay / 30);
+        if (diffMonth < 12) {
+            return `${diffMonth}mo ago`;
+        }
+
+        const diffYear = Math.floor(diffDay / 365);
+        return `${diffYear}y ago`;
+    }
+    const config =
+        ALERT_TYPE_CONFIG[item.emergency_type] ?? ALERT_TYPE_CONFIG.other;
+    const title = config.label;
+    // console.log(config);
+    // console.log(item);
 
     return (
         <>
             <TouchableOpacity
                 className="flex-row items-center px-5 py-5"
                 activeOpacity={0.6}
-                onPress={() => openInMaps(item.latitude, item.longitude)}
-                accessibilityLabel={`${title} at ${item.location}. Tap to view on map.`}
+                onPress={() =>
+                    openInMaps(
+                        item.location.coordinates[1],
+                        item.location.coordinates[0],
+                    )
+                }
+                accessibilityLabel={`${title} at . Tap to view on map.`}
                 accessibilityRole="button"
             >
                 {/* Colored icon circle */}
@@ -282,7 +165,7 @@ function AlertRow({ item, isLast }) {
                         className="text-gray-400 text-sm mt-0.5"
                         numberOfLines={1}
                     >
-                        {item.location}
+                        {item.address}
                     </Text>
                 </View>
 
@@ -291,7 +174,7 @@ function AlertRow({ item, isLast }) {
                     className="text-xs font-semibold ml-2 flex-shrink-0"
                     style={{ color: config.timeColor }}
                 >
-                    {item.time}
+                    {getTimeElapsed(item.created_at)}
                 </Text>
             </TouchableOpacity>
 
@@ -324,10 +207,24 @@ function EmptyState() {
 // ─── Main Screen ─────────────────────────────────────────────────────────────
 
 export default function AlertsNearYouScreen() {
+    let { latitude, longitude } = useAppContext();
     const router = useRouter();
+    let res;
+    let [alerts, setAlerts] = useState([]);
+    async function getNearbySos() {
+        res = await api.post("/geospatial/nearby-sos", {
+            longitude: longitude || 0,
+            latitude: latitude || 0,
+            max_distance_km: 10,
+            limit: 20,
+        });
+        setAlerts(res?.data?.sos_alerts);
+    }
+    useEffect(() => {
+        getNearbySos();
+    }, []);
 
     // TODO: swap MOCK_ALERTS for your real data
-    const alerts = MOCK_ALERTS;
 
     return (
         <ScreenWrapper>
@@ -392,7 +289,7 @@ export default function AlertsNearYouScreen() {
                         >
                             {alerts.map((item, index) => (
                                 <AlertRow
-                                    key={item.id}
+                                    key={item._id}
                                     item={item}
                                     isLast={index === alerts.length - 1}
                                 />

@@ -4,6 +4,8 @@ import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../context/AuthContext";
 import { useEffect, useState } from "react";
+import api from "../api/api";
+// import axios from "axios";
 
 export default function Home() {
     let { saveUser, user } = useAuth();
@@ -13,6 +15,22 @@ export default function Home() {
         const hasLaunched = await AsyncStorage.getItem("hasLaunched");
         if (hasLaunched === null) {
             router.replace("/getting-started");
+        }
+    };
+
+    const handleCitizenLogin = async () => {
+        try {
+            // const response = await axios.get(
+            //     "https://jsonplaceholder.typicode.com/users",
+            // );
+            const { data } = await api.post("/citizen");
+            // console.log(res.data);
+            await AsyncStorage.setItem("token", data.access_token);
+            saveUser({ id: data._id, role: "citizen" });
+
+            // console.log(response.data);
+        } catch (error) {
+            console.error(error);
         }
     };
 
@@ -55,10 +73,7 @@ export default function Home() {
                     <View>
                         <TouchableOpacity
                             className="flex-row items-center justify-end"
-                            onPress={() => {
-                                saveUser({ role: "citizen" });
-                                router.replace("/(citizens)/home");
-                            }}
+                            onPress={handleCitizenLogin}
                         >
                             <Ionicons
                                 name="arrow-forward-circle"

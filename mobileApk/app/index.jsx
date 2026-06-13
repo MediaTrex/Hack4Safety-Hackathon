@@ -5,9 +5,21 @@ import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../context/AuthContext";
 import { useEffect, useState } from "react";
 import api from "../api/api";
+import { useInternet } from "../context/InternetContext";
 // import axios from "axios";
 
 export default function Home() {
+    //check for internet , if not then show offline page
+    let { isConnected } = useInternet();
+
+    useEffect(() => {
+        if (!isConnected) {
+            router.replace("/offline");
+        } else {
+            router.replace("/");
+        }
+    }, [isConnected]);
+
     let { saveUser, user } = useAuth();
     const [ready, setReady] = useState(false);
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import {
     Feather,
@@ -9,6 +9,25 @@ import {
 import { useAuth } from "../../../context/AuthContext";
 import { router } from "expo-router";
 import ScreenWrapper from "../../../components/ScreenWrapper";
+import { useAppContext } from "../../../context/AppContext";
+import api from "../../../api/api";
+function EmptyState() {
+    return (
+        <View className="items-center justify-center py-4 px-8">
+            <MaterialCommunityIcons
+                name="bell-check-outline"
+                size={56}
+                color="#d1d5db"
+            />
+            <Text className="text-gray-700 text-base font-medium mt-4 text-center">
+                No active alerts near you
+            </Text>
+            <Text className="text-gray-300 text-sm mt-1 text-center">
+                We'll notify you when something is reported in your area.
+            </Text>
+        </View>
+    );
+}
 
 export default function HomeScreen() {
     let { logoutCitizen } = useAuth();
@@ -19,6 +38,24 @@ export default function HomeScreen() {
             : hour < 17
               ? "Good Afternoon,"
               : "Good Evening,";
+
+    let { latitude, longitude } = useAppContext();
+    let [alerts, setAlerts] = useState([]);
+    let getAlerts = async () => {
+        let res = await api.post("/geospatial/nearby-sos", {
+            longitude: longitude || 0,
+            latitude: latitude || 0,
+            max_distance_km: 10,
+            limit: 20,
+        });
+        setAlerts(res?.data?.sos_alerts);
+    };
+
+    useEffect(() => {
+        if (!latitude || !longitude) return;
+        getAlerts();
+    }, [latitude, longitude]);
+    console.log(alerts);
 
     return (
         <ScreenWrapper>
@@ -98,7 +135,7 @@ export default function HomeScreen() {
                                     Emergency
                                 </Text>
                                 <Text className="text-red-100 text-base mt-1">
-                                    Tap to goto SOS alert screen
+                                    Tap to alert SOS
                                 </Text>
                             </View>
                         </TouchableOpacity>
@@ -168,7 +205,9 @@ export default function HomeScreen() {
                                 </Text>
 
                                 <TouchableOpacity
-                                    onPress={() => router.push("/(citizens)/alerts")}
+                                    onPress={() =>
+                                        router.push("/(citizens)/alerts")
+                                    }
                                 >
                                     <Text className="text-blue-600 font-medium">
                                         View All
@@ -177,61 +216,65 @@ export default function HomeScreen() {
                             </View>
 
                             {/* Alert Card 1 */}
-                            <View className="bg-white border border-gray-200 rounded-2xl p-4">
-                                <View className="flex-row items-center justify-between">
-                                    <View className="flex-row">
-                                        <View className="w-14 h-14 rounded-full bg-red-100 items-center justify-center">
-                                            <MaterialCommunityIcons
-                                                name="waves"
-                                                size={26}
-                                                color="#ef4444"
-                                            />
+                            {alerts.length > 0 ? (
+                                <View className="bg-white border border-gray-200 rounded-2xl p-4">
+                                    <View className="flex-row items-center justify-between">
+                                        <View className="flex-row">
+                                            <View className="w-14 h-14 rounded-full bg-red-100 items-center justify-center">
+                                                <MaterialCommunityIcons
+                                                    name="waves"
+                                                    size={26}
+                                                    color="#ef4444"
+                                                />
+                                            </View>
+
+                                            <View className="ml-3">
+                                                <Text className="font-semibold text-gray-800 text-xl">
+                                                    Flood Alert
+                                                </Text>
+                                                <Text className="text-gray-500 text-sm">
+                                                    Butwal, Rupandehi
+                                                </Text>
+                                            </View>
                                         </View>
 
-                                        <View className="ml-3">
-                                            <Text className="font-semibold text-gray-800 text-xl">
-                                                Flood Alert
-                                            </Text>
-                                            <Text className="text-gray-500 text-sm">
-                                                Butwal, Rupandehi
-                                            </Text>
-                                        </View>
+                                        <Text className="text-red-500 text-xs font-medium">
+                                            2 min ago
+                                        </Text>
                                     </View>
 
-                                    <Text className="text-red-500 text-xs font-medium">
-                                        2 min ago
-                                    </Text>
-                                </View>
+                                    {/* Divider */}
+                                    <View className="h-px bg-gray-100 my-4" />
 
-                                {/* Divider */}
-                                <View className="h-px bg-gray-100 my-4" />
+                                    {/* Alert Card 2 */}
+                                    <View className="flex-row items-center justify-between">
+                                        <View className="flex-row">
+                                            <View className="w-14 h-14 rounded-full bg-orange-100 items-center justify-center">
+                                                <MaterialIcons
+                                                    name="warning-amber"
+                                                    size={26}
+                                                    color="#f97316"
+                                                />
+                                            </View>
 
-                                {/* Alert Card 2 */}
-                                <View className="flex-row items-center justify-between">
-                                    <View className="flex-row">
-                                        <View className="w-14 h-14 rounded-full bg-orange-100 items-center justify-center">
-                                            <MaterialIcons
-                                                name="warning-amber"
-                                                size={26}
-                                                color="#f97316"
-                                            />
+                                            <View className="ml-3">
+                                                <Text className="font-semibold text-gray-800  text-xl">
+                                                    Landslide Risk
+                                                </Text>
+                                                <Text className="text-gray-500 text-sm">
+                                                    Palpa, Tanahu
+                                                </Text>
+                                            </View>
                                         </View>
 
-                                        <View className="ml-3">
-                                            <Text className="font-semibold text-gray-800  text-xl">
-                                                Landslide Risk
-                                            </Text>
-                                            <Text className="text-gray-500 text-sm">
-                                                Palpa, Tanahu
-                                            </Text>
-                                        </View>
+                                        <Text className="text-orange-500 text-xs font-medium">
+                                            16 min ago
+                                        </Text>
                                     </View>
-
-                                    <Text className="text-orange-500 text-xs font-medium">
-                                        16 min ago
-                                    </Text>
                                 </View>
-                            </View>
+                            ) : (
+                                <EmptyState />
+                            )}
                         </View>
                     </View>
                 </View>

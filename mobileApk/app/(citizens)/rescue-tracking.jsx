@@ -97,29 +97,11 @@ export default function RescueTrackingScreen() {
     const [etaMinutes, setEtaMinutes] = useState(null);
 
     const mapRef = useRef(null);
-
+    
     useEffect(() => {
         try {
-            setData({
-                _id: "ObjectId('6a2959146933a38e2a70520a')",
-                operation_id: "OS-2026-06-10-1",
-                sos_id: "6a2959136933a38e2a705209",
-                assignId: "6a29583e6933a38e2a705207",
-                sos_location: {
-                    type: "Point",
-                    coordinates: [87.2795, 26.4525],
-                },
-                rescue_team_location: {
-                    type: "point",
-                    coordinates: [87.3155, 26.4669],
-                },
-                status: "victim_safe",
-                taskStatus: "accepted",
-                created_at: "2026-06-10T12:31:16.464+00:00",
-                updated_at: "2026-06-10T13:11:28.942+00:00",
-            });
+            setData(JSON.parse(details));
         } catch {
-            // fallback test data while developing
             setData({
                 _id: "ObjectId('6a2959146933a38e2a70520a')",
                 operation_id: "OS-2026-06-10-1",
@@ -138,6 +120,7 @@ export default function RescueTrackingScreen() {
                 created_at: "2026-06-10T12:31:16.464+00:00",
                 updated_at: "2026-06-10T13:11:28.942+00:00",
             });
+            // fallback test data while developing
         }
     }, [details]);
 
@@ -254,7 +237,7 @@ export default function RescueTrackingScreen() {
                     </View>
 
                     {/* ── Not Assigned State ── */}
-                    {!isAssigned && data !== null && (
+                    {!isAssigned && (
                         <View className="mx-4 mt-6 bg-white rounded-2xl p-8 items-center shadow-sm border border-gray-100">
                             <Text className="text-5xl mb-4">🚨</Text>
                             <Text className="text-gray-800 font-semibold text-lg text-center mb-2">

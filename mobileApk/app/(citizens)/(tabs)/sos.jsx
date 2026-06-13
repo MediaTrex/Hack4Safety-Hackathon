@@ -289,7 +289,7 @@ export default function SOSScreen() {
 
                     {/* Location card */}
                     <View
-                        className="flex-row items-start bg-white border border-gray-200 rounded-2xl p-6 mb-6"
+                        className="flex-row items-start bg-white border border-gray-200 rounded-2xl p-4 mb-6"
                         style={{
                             shadowColor: "#000",
                             shadowOpacity: 0.06,
@@ -309,7 +309,7 @@ export default function SOSScreen() {
                             <Text className="text-[18px] text-slate-500 font-medium mb-0.5">
                                 Your Location
                             </Text>
-                            <Text className="text-2xl font-bold text-gray-900">
+                            <Text className="text-xl font-bold text-gray-900">
                                 {location.city || "---"},{" "}
                                 {location.region || "---"}
                             </Text>

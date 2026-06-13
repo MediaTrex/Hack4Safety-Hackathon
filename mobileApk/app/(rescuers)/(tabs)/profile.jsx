@@ -81,7 +81,7 @@ export default function ProfileScreen() {
         console.log("Logout pressed");
         saveUser(null);
         await AsyncStorage.removeItem("token");
-        router.replace("/(rescuers)/login-rescuers");
+        router.replace("/");
     };
 
     return (

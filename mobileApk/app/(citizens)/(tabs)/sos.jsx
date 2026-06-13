@@ -111,7 +111,6 @@ export default function SOSScreen() {
 
     const [formData, setFormData] = useState({
         emergencyType: "Flood",
-        phoneNumber: "",
         details: "",
     });
     const [sending, setSending] = useState(false);
@@ -126,22 +125,13 @@ export default function SOSScreen() {
 
     // ── Handle Send ──────────────────────────────────────────────────────────────
     const handleSend = async () => {
+        let phone = await AsyncStorage.getItem("phone");
         // 1. Permission check
         if (
             permissionStatus === "undetermined" ||
             permissionStatus === "denied"
         ) {
             requestPermission();
-        }
-
-        // 2. Phone number required
-        if (!formData.phoneNumber || formData.phoneNumber.trim() === "") {
-            Toast.show({
-                type: "error",
-                text1: "Phone number required",
-                text2: "Please enter your phone number before sending.",
-            });
-            return;
         }
 
         // 3. Emergency type check (shouldn't happen but guard anyway)
@@ -161,7 +151,7 @@ export default function SOSScreen() {
                 id: Date.now().toString(),
                 sentAt: new Date().toISOString(),
                 type: formData.emergencyType.toLowerCase(),
-                phoneNumber: formData.phoneNumber.trim(),
+                phoneNumber: `${phone}`,
                 additionalDetail: formData.details.trim() || null,
                 latitude: latitude ?? null,
                 longitude: longitude ?? null,
@@ -178,7 +168,7 @@ export default function SOSScreen() {
                 },
                 address: `${newAlert.address.city}, ${newAlert.address.state}`,
                 emergency_type: `${newAlert.type}`,
-                mobile_no: `${newAlert.phoneNumber}`,
+                mobile_no: `${phone}`,
                 additional_details: `${newAlert.additionalDetail}`,
             };
 
@@ -230,7 +220,6 @@ export default function SOSScreen() {
             // 8. Reset form
             setFormData({
                 emergencyType: "Flood",
-                phoneNumber: "",
                 details: "",
             });
 
@@ -384,24 +373,6 @@ export default function SOSScreen() {
                             );
                         })}
                     </View>
-
-                    {/* Phone Number */}
-                    <Text className="text-xl font-bold text-gray-900 mb-3">
-                        Phone Number
-                    </Text>
-                    <TextInput
-                        className="border border-gray-200 rounded-2xl p-4 text-base text-gray-800 bg-gray-50 mb-6"
-                        placeholder="Enter your phone number"
-                        placeholderTextColor="#9CA3AF"
-                        keyboardType="phone-pad"
-                        value={formData.phoneNumber}
-                        onChangeText={(text) =>
-                            setFormData((prev) => ({
-                                ...prev,
-                                phoneNumber: text,
-                            }))
-                        }
-                    />
 
                     {/* Additional Details */}
                     <Text className="text-xl font-bold text-gray-900 mb-3">

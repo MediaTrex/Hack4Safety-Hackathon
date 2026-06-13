@@ -291,7 +291,7 @@ export default function Dashboard({ onNavigate }) {
             <div className="divide-y divide-gray-50">
               {recentAlerts.map((a) => (
                 <div
-                  key={a.type}
+                  key={a.type + '-' + a.loc}
                   className="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 transition"
                 >
                   <span

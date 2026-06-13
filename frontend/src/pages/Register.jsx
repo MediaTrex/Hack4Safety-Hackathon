@@ -1,6 +1,11 @@
-import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { post } from '../api/api';
+import { useAuth } from '../context/AuthContext';
 
 export default function Register({ onLogin }) {
+  const navigate = useNavigate();
+  const { login } = useAuth();
   const [form, setForm] = useState({ name: '', mobile: '', email: '', role: '', password: '', confirm: '' });
   const [showPw, setShowPw] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -49,19 +54,19 @@ export default function Register({ onLogin }) {
         width: '48%', position: 'relative', overflow: 'hidden', flexDirection: 'column', display: 'none'
       }}>
         {/* Splash background */}
-         <img
-  src="/splash.png"
-  alt="SAJAG AI"
-  style={{
-    position: 'absolute',
-    inset: 0,
-    width: '100%',
-    height: '100%',
-    objectFit: 'contain',
-    objectPosition: 'center',
-    backgroundColor: '#0a1f4e' // fills empty space nicely
-  }}
-/>
+        <img
+          src="/splash.png"
+          alt="SAJAG AI"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'contain',
+            objectPosition: 'center',
+            backgroundColor: '#0a1f4e' // fills empty space nicely
+          }}
+        />
         <div style={{
           position: 'absolute', inset: 0,
           background: 'linear-gradient(180deg, rgba(10,28,70,0.7) 0%, rgba(10,28,70,0.5) 40%, rgba(10,28,70,0.8) 100%)'
@@ -97,7 +102,7 @@ export default function Register({ onLogin }) {
               {features.map((f, i) => (
                 <div key={i} style={{
                   display: 'flex', alignItems: 'flex-start', gap: '12px',
-                  background: 'rgba(10,28,70,0.5)', 
+                  background: 'rgba(10,28,70,0.5)',
                   border: '1px solid rgba(255,255,255,0.12)', borderRadius: '12px', padding: '12px 14px'
                 }}>
                   <div style={{
@@ -194,8 +199,6 @@ export default function Register({ onLogin }) {
                   }}>
                   <option value="">Select your role</option>
                   <option>Administrator</option>
-                  <option>Rescue Team</option>
-                  <option>Citizen</option>
                 </select>
               </div>
 
@@ -267,22 +270,82 @@ export default function Register({ onLogin }) {
 
             {/* Next button */}
             <button
+              onClick={async () => {
+                try {
+                  const data = await post('/auth/admin/register', {
+                    full_name: form.name,
+                    mobile_number: form.mobile,
+                    email: form.email,
+                    password: form.password,
+                    role: form.role,
+                  });
+                  // login after successful registration
+                  login(data);
+                  navigate('/');
+                } catch (error) {
+                  alert(error.message || 'Registration failed');
+                }
+              }}
               style={{
-                width: '100%', marginTop: '16px', padding: '13px 0',
+                width: '100%',
+                marginTop: '16px',
+                padding: '13px 0',
                 background: 'linear-gradient(135deg, #1a3a6b 0%, #2563eb 100%)',
-                color: '#fff', border: 'none', borderRadius: '10px', fontSize: '14.5px', fontWeight: 600,
-                cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '10px',
+                fontSize: '14.5px',
+                fontWeight: 600,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
                 boxShadow: '0 4px 14px rgba(37,99,235,0.35)'
-              }}>
-              <span>Next</span>
+              }}
+            >
+              <span>Register</span>
               <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
               </svg>
             </button>
 
+            {/* Divider */}
+            <div className="flex items-center gap-3 my-5">
+              <div className="flex-1 h-px bg-slate-100" />
+              <span className="text-xs text-slate-400 whitespace-nowrap">or continue with</span>
+              <div className="flex-1 h-px bg-slate-100" />
+            </div>
+
+            {/* Social buttons */}
+            <div className="flex flex-col gap-2.5">
+              {[{
+                icon: (
+                  <svg width="18" height="18" viewBox="0 0 48 48">
+                    <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
+                    <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z" />
+                    <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z" />
+                    <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z" />
+                  </svg>
+                ), label: "Continue with Google"
+              },
+              {
+                icon: (
+                  <svg width="18" height="18" fill="#1877F2" viewBox="0 0 24 24">
+                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                  </svg>
+                ), label: "Continue with Facebook"
+              }].map((s, i) => (
+                <button key={i} className="w-full flex items-center justify-center gap-2.5 py-[11px] border-[1.5px] border-slate-200 rounded-[10px] bg-white text-[13.5px] text-gray-700 cursor-pointer font-medium transition-all duration-150 hover:bg-slate-50 hover:border-slate-300">
+                  {s.icon} {s.label}
+                </button>
+              ))
+              }
+            </div>
+
             <p style={{ textAlign: 'center', fontSize: '13.5px', color: '#64748b', marginTop: '16px' }}>
               Already have an account?{' '}
-              <button onClick={onLogin} style={{ background: 'none', border: 'none', color: '#2563eb', fontWeight: 600, cursor: 'pointer', fontSize: '13.5px' }}>
+              <button onClick={() => navigate('/login')} style={{ background: 'none', border: 'none', color: '#2563eb', fontWeight: 600, cursor: 'pointer', fontSize: '13.5px' }}>
                 Login
               </button>
             </p>

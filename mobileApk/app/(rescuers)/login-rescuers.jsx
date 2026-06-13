@@ -15,8 +15,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 // Icon components (uses expo vector icons — install with: npx expo install @expo/vector-icons)
 import { Ionicons, MaterialCommunityIcons, Feather } from "@expo/vector-icons";
+import api from "../../api/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useAuth } from "../../context/AuthContext";
 
 export default function LoginScreen() {
+    let [loading, setLoading] = useState(false);
+    let { saveUser } = useAuth();
     const router = useRouter();
     const [showPassword, setShowPassword] = useState(false);
 
@@ -31,9 +36,53 @@ export default function LoginScreen() {
         },
     });
 
-    const onSubmit = (data) => {
-        console.log("Login data:", data);
-        // TODO: call your auth API here
+    const onSubmit = async (data) => {
+        // console.log("Login data:", data);
+        setLoading(true);
+        let res = await fetch(
+            `${process.env.EXPO_PUBLIC_BACKEND_URL}/auth/login`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    identifier: data.email,
+                    password: data.password,
+                }),
+            },
+        );
+
+        let resData = await res.json();
+        setLoading(false);
+        // console.log(JSON.stringify(resData, null, 2));
+        if (!res.ok) {
+            // console.log(resData);
+            if (resData.detail === "Invalid credentials") {
+                Toast.show({
+                    type: "error",
+                    text1: "Invalid credentials.",
+                    text2: "Please try again.",
+                });
+                return;
+            } else {
+                Toast.show({
+                    type: "error",
+                    text1: "Something went wrong.",
+                    text2: "Please try again.",
+                });
+                return;
+            }
+        }
+        await AsyncStorage.setItem("token", resData.access_token);
+        saveUser({
+            id: resData.user_id,
+            role: "rescuers",
+            email: resData.email,
+            full_name: resData.full_name,
+        });
+        // console.log(resData);
+        router.replace("/(rescuers)/dashboard");
     };
 
     return (
@@ -112,8 +161,8 @@ export default function LoginScreen() {
                     rules={{
                         required: "Password is required",
                         minLength: {
-                            value: 6,
-                            message: "Password must be at least 6 characters",
+                            value: 8,
+                            message: "Password must be at least 8 characters",
                         },
                     }}
                     render={({ field: { onChange, onBlur, value } }) => (
@@ -178,9 +227,10 @@ export default function LoginScreen() {
                     onPress={handleSubmit(onSubmit)}
                     className="bg-blue-600 rounded-xl h-13 items-center justify-center mb-6"
                     activeOpacity={0.85}
+                    disabled={loading}
                 >
                     <Text className="text-white font-semibold text-[15px]">
-                        Login
+                        {loading ? "Logging in..." : "Login"}
                     </Text>
                 </TouchableOpacity>
 

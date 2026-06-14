@@ -97,10 +97,27 @@ export default function RescueTrackingScreen() {
     const [etaMinutes, setEtaMinutes] = useState(null);
 
     const mapRef = useRef(null);
-    
+
     useEffect(() => {
         try {
-            setData(JSON.parse(details));
+            setData({
+                _id: "ObjectId('6a2959146933a38e2a70520a')",
+                operation_id: "OS-2026-06-10-1",
+                sos_id: "6a2959136933a38e2a705209",
+                assignId: "6a29583e6933a38e2a705207",
+                sos_location: {
+                    type: "Point",
+                    coordinates: [83.4748, 27.6842],
+                },
+                rescue_team_location: {
+                    type: "point",
+                    coordinates: [83.4747, 27.684],
+                },
+                status: "assigned",
+                taskStatus: "accepted",
+                created_at: "2026-06-10T12:31:16.464+00:00",
+                updated_at: "2026-06-10T13:11:28.942+00:00",
+            });
         } catch {
             setData({
                 _id: "ObjectId('6a2959146933a38e2a70520a')",
@@ -113,7 +130,7 @@ export default function RescueTrackingScreen() {
                 },
                 rescue_team_location: {
                     type: "point",
-                    coordinates: [83.4747, 27.6840],
+                    coordinates: [83.4747, 27.684],
                 },
                 status: "victim_safe",
                 taskStatus: "accepted",

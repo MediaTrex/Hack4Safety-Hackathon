@@ -162,14 +162,18 @@ function StatCard({ label, value, color, border, bg, dashDetails }) {
                 {label}
             </Text>
             <Text className={`text-4xl font-bold ${color}`}>
-                {dashDetails?.count === 0 && label === "Assigned\nMissions" ? 0 : value}
+                {dashDetails?.count === 0 && label === "Assigned\nMissions"
+                    ? 0
+                    : value}
             </Text>
         </View>
     );
 }
 
 /** Single operation row */
-function OperationCard({ title, location, priority, type }) {
+function OperationCard({ title, location, type, priority: p }) {
+    let priority =
+        p || ["high", "medium", "normal"][Math.floor(Math.random() * 3)];
     const badge = PRIORITY[priority] ?? PRIORITY.Normal;
     let icon = Icons[type];
     // Card background color
@@ -244,7 +248,7 @@ export default function DashboardScreen() {
         }
         let data = await res.json();
         setDashDetails(data);
-        console.log(data);
+        console.log(JSON.stringify(data.missions, null, 2));
     }
 
     useEffect(() => {
@@ -317,8 +321,8 @@ export default function DashboardScreen() {
                                 </TouchableOpacity>
                             </View>
 
-                            {dashDetails?.missions?.length > 0 ? (
-                                dashDetails.missions.map((mission) => (
+                            {OPERATIONS.length > 0 ? (
+                                OPERATIONS.map((mission) => (
                                     <OperationCard
                                         key={mission.id}
                                         {...mission}

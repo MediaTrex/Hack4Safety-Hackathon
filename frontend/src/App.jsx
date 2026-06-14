@@ -1,25 +1,49 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import MainLayout from './components/layout/MainLayout';
 
-const AppContent = () => {
+function RequireAuth({ children }) {
   const { user } = useAuth();
-  const [authPage, setAuthPage] = useState('login');
+  return user ? children : <Navigate to="/login" replace />;
+}
 
-  if (!user) {
-    if (authPage === 'register') return <Register onLogin={() => setAuthPage('login')} />;
-    return <Login onRegister={() => setAuthPage('register')} />;
-  }
-
-  return <MainLayout />;
-};
+function PublicRoute({ children }) {
+  const { user } = useAuth();
+  return !user ? children : <Navigate to="/" replace />;
+}
 
 export default function App() {
   return (
     <AuthProvider>
-      <AppContent />
+      <Routes>
+        <Route
+          path="/login"
+          element={
+            <PublicRoute>
+              <Login />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <PublicRoute>
+              <Register />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/*"
+          element={
+            <RequireAuth>
+              <MainLayout />
+            </RequireAuth>
+          }
+        />
+      </Routes>
     </AuthProvider>
   );
 }

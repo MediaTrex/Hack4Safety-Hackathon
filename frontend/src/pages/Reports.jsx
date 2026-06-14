@@ -50,9 +50,11 @@ export default function Reports() {
               <div className="flex items-center justify-between p-4 border-b">
                 <h3 className="font-semibold text-sm text-gray-800">Incident Reports</h3>
                 <div className="flex items-center gap-2">
-                  <div className="text-sm text-gray-500 border border-gray-200 rounded-lg px-3 py-1.5">📅 May 16, 2025 – May 23, 2025</div>
+                  <div className="text-sm text-gray-500 border border-gray-200 rounded-lg px-3 py-1.5">
+                    
+                  </div>
                   <button className="flex items-center gap-2 bg-blue-600 text-white text-sm px-4 py-1.5 rounded-lg hover:bg-blue-700">
-                    ⬇️ Download Report
+                    Download Report
                   </button>
                 </div>
               </div>

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from app.utils.generate_operation_id import generate_operation_id
-# pyrefly: ignore [missing-import]
 from bson import ObjectId
 
 from datetime import datetime, timezone
@@ -21,7 +20,7 @@ def _utcnow() -> datetime:
     return datetime.now(timezone.utc)
 
 
-async def create_sos(payload: SOSCreateRequest) -> dict:
+async def create_sos(payload: SOSCreateRequest) -> str:
     sos_col = await get_collection("sos")
     operations_col = await get_collection("operations")
 
@@ -63,7 +62,6 @@ async def create_sos(payload: SOSCreateRequest) -> dict:
     await sos_col.create_index([("created_at", -1)])
 
 
-    # Insert operation document and capture the inserted document
     await operations_col.insert_one(
         {
             "operation_id": op.operation_id,
@@ -78,15 +76,7 @@ async def create_sos(payload: SOSCreateRequest) -> dict:
         }
     )
 
-    # Retrieve the full operation document just created
-    operation_doc = await operations_col.find_one({"operation_id": operation_id})
-    if operation_doc:
-        operation_doc["_id"] = str(operation_doc["_id"])
-    else:
-        operation_doc = {}
-
-    # Return both SOS id and full operation data
-    return {"operation": operation_doc}
+    return sos_id
 
 
 async def create_report(payload: ReportCreateRequest) -> str:
@@ -102,7 +92,7 @@ async def create_report(payload: ReportCreateRequest) -> str:
         "description": payload.description,
         "media": payload.media,
         "voice_messages": payload.voice_messages,
-                "citizen_id": payload.citizen_id,
+        "mobile_no": payload.mobile_no,
         "created_at": _utcnow(),
         "updated_at": _utcnow(),
     }
@@ -261,6 +251,7 @@ async def get_operation(operation_id: str) -> Optional[dict]:
 
     # fallback: try ObjectId conversion
     try:
+        from bson import ObjectId
 
         doc = await operations_col.find_one({"_id": ObjectId(operation_id)})
         if not doc:

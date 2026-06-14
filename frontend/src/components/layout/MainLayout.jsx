@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Topbar from './Topbar';
 import Dashboard from '../../pages/Dashboard';
@@ -51,13 +52,29 @@ const PAGE_TITLES = {
 };
 
 export default function MainLayout() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [activePage, setActivePage] = useState('dashboard');
+
+  // Sync activePage with URL path
+  useEffect(() => {
+    const path = location.pathname.replace(/^\//, '') || 'dashboard';
+    if (path !== activePage) {
+      setActivePage(path);
+    }
+  }, [location.pathname]);
+
+  const handleNavigate = (page) => {
+    setActivePage(page);
+    navigate(`/${page}`);
+  };
+
   const PageComponent = PAGE_COMPONENTS[activePage] || Dashboard;
   const pageInfo = PAGE_TITLES[activePage] || { title: 'SAJAG AI', subtitle: '' };
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#f0f4f8]">
-      <Sidebar activePage={activePage} onNavigate={setActivePage} />
+      <Sidebar activePage={activePage} onNavigate={handleNavigate} />
       <div className="flex-1 flex flex-col overflow-hidden">
         <Topbar title={pageInfo.title} subtitle={pageInfo.subtitle} />
         <div className="flex-1 overflow-y-auto p-1 shadow-[inset_0_2px_8px_rgba(0,0,0,0.04)]">

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 
 const SOS_DATA = [
   // Page 1 — May 23
@@ -56,7 +57,8 @@ export default function SosAlerts() {
   const [dateFrom, setDateFrom]         = useState("");
   const [dateTo, setDateTo]             = useState("");
   const [currentPage, setCurrentPage]   = useState(1);
-  const [selectedId, setSelectedId]     = useState(null);
+  const [selectedId, setSelectedId] = useState(null);
+  const navigate = useNavigate();
 
   const mapRef     = useRef(null);
   const leafletMap = useRef(null);
@@ -245,7 +247,7 @@ export default function SosAlerts() {
                 <tr key={s.id}
                   className={`hover:bg-gray-50 transition cursor-pointer ${selectedId === s.id ? "bg-red-50" : ""}`}
                   onClick={() => focusSos(s)}>
-                  <td className="px-4 py-3 text-xs text-red-600 font-medium">{s.id}</td>
+                  <td className="px-3 py-3 text-xs text-red-600 font-medium">{s.id}</td>
                   <td className="px-4 py-3 text-xs text-gray-600">{s.location}</td>
                   <td className="px-4 py-3 text-xs text-gray-700">
                     <span className="flex items-center gap-1">{TYPE_ICON[s.type]} {s.type}</span>
@@ -255,7 +257,21 @@ export default function SosAlerts() {
                     <span className={`text-xs px-2 py-1 rounded-full font-medium ${STATUS_STYLE[s.status] || "text-gray-600 bg-gray-50"}`}>{s.status}</span>
                   </td>
                   <td className="px-4 py-3 text-xs"><span className={PRIORITY_STYLE[s.priority]}>{s.priority}</span></td>
-                  <td className="px-4 py-3 text-xs text-gray-600">{s.team}</td>
+                  <td className="px-4 py-3 text-xs text-gray-600">
+                    {s.team && s.team !== "-" ? (
+                      s.team
+                    ) : (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/rescue-teams?id=${s.id}`);
+                        }}
+                        className="text-xs text-blue-600 border border-blue-200 px-1 rounded py-0.5 hover:bg-blue-50 transition"
+                      >
+                        Assign
+                      </button>
+                    )}
+                  </td>
                   <td className="px-4 py-3">
                     <button onClick={(e) => { e.stopPropagation(); focusSos(s); }}
                       className="text-xs text-red-500 hover:text-red-700 border border-red-200 px-2 py-0.5 rounded hover:bg-red-50 transition">

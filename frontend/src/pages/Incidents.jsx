@@ -2,32 +2,48 @@ import React, { useState, useEffect, useRef } from "react";
 
 const INCIDENTS = [
   // Page 1
-  { id: "INC-2025-0523-24", type: "Flood",     location: "Butwal, Rupandehi",          time: "2025-05-23T10:21", status: "In Progress",      priority: "High",   team: "Team Alpha",   lat: 27.6745, lng: 83.4753 },
-  { id: "INC-2025-0523-23", type: "Landslide", location: "Palpa, Tanahun",              time: "2025-05-23T09:41", status: "On The Way",       priority: "Medium", team: "Team Bravo",   lat: 27.9674, lng: 82.8309 },
-  { id: "INC-2025-0523-22", type: "Accident",  location: "Siddharth Hwy, Bhairawa",    time: "2025-05-23T09:15", status: "Rescue Started",   priority: "High",   team: "Team Charlie", lat: 27.6588, lng: 83.4561 },
-  { id: "INC-2025-0523-21", type: "Crowd",     location: "Tinkune, Kathmandu",          time: "2025-05-23T09:20", status: "Monitoring",       priority: "Low",    team: "-",            lat: 27.7069, lng: 85.3145 },
-  { id: "INC-2025-0523-20", type: "Fire",      location: "Biratnagar, Morang",          time: "2025-05-23T07:50", status: "Assigned",         priority: "Medium", team: "Team Delta",   lat: 26.4525, lng: 87.2718 },
-  { id: "INC-2025-0523-19", type: "Flood",     location: "Devdaha, Rupandehi",          time: "2025-05-23T07:20", status: "In Progress",      priority: "High",   team: "Team Alpha",   lat: 27.5034, lng: 83.4540 },
-  { id: "INC-2025-0523-18", type: "Landslide", location: "Arghakhanchi",               time: "2025-05-23T06:40", status: "On The Way",       priority: "Medium", team: "Team Bravo",   lat: 27.9400, lng: 83.1500 },
-  { id: "INC-2025-0523-17", type: "Accident",  location: "Pokhara, Kaski",             time: "2025-05-23T06:10", status: "Rescue Completed", priority: "Low",    team: "Team Charlie", lat: 28.2096, lng: 83.9856 },
+  {type: "Flood",     location: "Butwal, Rupandehi",          time: "2025-05-23T10:21", status: "In Progress",      priority: "High",   team: "Team Alpha",   lat: 27.6745, lng: 83.4753, images: [
+    "/disaster/flood_1.avif",
+    "/disaster/flood_2.avif",
+    "/disaster/flood_3.avif"
+  ] },
+  {type: "Landslide", location: "Palpa, Tanahun",              time: "2025-05-23T09:41", status: "On The Way",       priority: "Medium", team: "Team Bravo",   lat: 27.9674, lng: 82.8309, images:[
+     "/disaster/landslide_1.avif",
+     "/disaster/landslide_2.avif",
+     "/disaster/landslide_3.avif",
+  ] },
+  { type: "Accident",  location: "Siddharth Hwy, Bhairawa",    time: "2025-05-23T09:15", status: "Rescue Started",   priority: "High",   team: "Team Charlie", lat: 27.6588, lng: 83.4561,
+    images:[
+       "/disaster/accident_1.avif",
+       "/disaster/accident_2.avif",
+       "/disaster/accident_3.avif",
+    ]
+   },
+  { type: "Crowd",     location: "Tinkune, Kathmandu",          time: "2025-05-23T09:20", status: "Monitoring",       priority: "Low",    team: "-",            lat: 27.7069, lng: 85.3145, images:[
+    
+  ] },
+  { type: "Fire",      location: "Biratnagar, Morang",          time: "2025-05-23T07:50", status: "Assigned",         priority: "Medium", team: "Team Delta",   lat: 26.4525, lng: 87.2718 },
+  {type: "Flood",     location: "Devdaha, Rupandehi",          time: "2025-05-23T07:20", status: "In Progress",      priority: "High",   team: "Team Alpha",   lat: 27.5034, lng: 83.4540 },
+  {type: "Landslide", location: "Arghakhanchi",               time: "2025-05-23T06:40", status: "On The Way",       priority: "Medium", team: "Team Bravo",   lat: 27.9400, lng: 83.1500 },
+  {type: "Accident",  location: "Pokhara, Kaski",             time: "2025-05-23T06:10", status: "Rescue Completed", priority: "Low",    team: "Team Charlie", lat: 28.2096, lng: 83.9856 },
   // Page 2
-  { id: "INC-2025-0522-16", type: "Fire",      location: "Surkhet, Birendranagar",     time: "2025-05-22T21:30", status: "In Progress",      priority: "High",   team: "Team Echo",    lat: 28.6835, lng: 81.6227 },
-  { id: "INC-2025-0522-15", type: "Flood",     location: "Banke, Nepalgunj",           time: "2025-05-22T19:55", status: "Rescue Started",   priority: "High",   team: "Team Foxtrot", lat: 28.0500, lng: 81.6167 },
-  { id: "INC-2025-0522-14", type: "Crowd",     location: "Itahari, Sunsari",           time: "2025-05-22T18:10", status: "Monitoring",       priority: "Low",    team: "-",            lat: 26.8120, lng: 87.2833 },
-  { id: "INC-2025-0522-13", type: "Landslide", location: "Jumla, Karnali",             time: "2025-05-22T16:45", status: "Assigned",         priority: "Medium", team: "Team Delta",   lat: 29.2747, lng: 82.1838 },
-  { id: "INC-2025-0522-12", type: "Accident",  location: "Birgunj, Parsa",             time: "2025-05-22T14:30", status: "Rescue Completed", priority: "Low",    team: "Team Alpha",   lat: 27.0104, lng: 84.8770 },
-  { id: "INC-2025-0522-11", type: "Fire",      location: "Dharan, Sunsari",            time: "2025-05-22T13:00", status: "In Progress",      priority: "High",   team: "Team Bravo",   lat: 27.3314, lng: 87.6743 },
-  { id: "INC-2025-0522-10", type: "Flood",     location: "Chitwan, Bharatpur",         time: "2025-05-22T11:20", status: "On The Way",       priority: "Medium", team: "Team Charlie", lat: 27.5291, lng: 84.3542 },
-  { id: "INC-2025-0522-09", type: "Crowd",     location: "Banepa, Kavre",              time: "2025-05-22T09:45", status: "Monitoring",       priority: "Low",    team: "-",            lat: 27.6300, lng: 85.5200 },
+  {type: "Fire",      location: "Surkhet, Birendranagar",     time: "2025-05-22T21:30", status: "In Progress",      priority: "High",   team: "Team Echo",    lat: 28.6835, lng: 81.6227 },
+  {type: "Flood",     location: "Banke, Nepalgunj",           time: "2025-05-22T19:55", status: "Rescue Started",   priority: "High",   team: "Team Foxtrot", lat: 28.0500, lng: 81.6167 },
+  {type: "Crowd",     location: "Itahari, Sunsari",           time: "2025-05-22T18:10", status: "Monitoring",       priority: "Low",    team: "-",            lat: 26.8120, lng: 87.2833 },
+  {type: "Landslide", location: "Jumla, Karnali",             time: "2025-05-22T16:45", status: "Assigned",         priority: "Medium", team: "Team Delta",   lat: 29.2747, lng: 82.1838 },
+  {type: "Accident",  location: "Birgunj, Parsa",             time: "2025-05-22T14:30", status: "Rescue Completed", priority: "Low",    team: "Team Alpha",   lat: 27.0104, lng: 84.8770 },
+  {type: "Fire",      location: "Dharan, Sunsari",            time: "2025-05-22T13:00", status: "In Progress",      priority: "High",   team: "Team Bravo",   lat: 27.3314, lng: 87.6743 },
+  { type: "Flood",     location: "Chitwan, Bharatpur",         time: "2025-05-22T11:20", status: "On The Way",       priority: "Medium", team: "Team Charlie", lat: 27.5291, lng: 84.3542 },
+  {type: "Crowd",     location: "Banepa, Kavre",              time: "2025-05-22T09:45", status: "Monitoring",       priority: "Low",    team: "-",            lat: 27.6300, lng: 85.5200 },
   // Page 3
-  { id: "INC-2025-0521-08", type: "Landslide", location: "Mustang, Jomsom",            time: "2025-05-21T22:10", status: "Rescue Started",   priority: "High",   team: "Team Echo",    lat: 28.6956, lng: 83.4861 },
-  { id: "INC-2025-0521-07", type: "Accident",  location: "Hetauda, Makwanpur",         time: "2025-05-21T20:30", status: "Rescue Completed", priority: "Medium", team: "Team Foxtrot", lat: 27.4295, lng: 85.0322 },
-  { id: "INC-2025-0521-06", type: "Fire",      location: "Kailali, Dhangadhi",         time: "2025-05-21T18:00", status: "Assigned",         priority: "High",   team: "Team Delta",   lat: 28.7000, lng: 80.6000 },
-  { id: "INC-2025-0521-05", type: "Flood",     location: "Lamjung, Besisahar",         time: "2025-05-21T15:30", status: "In Progress",      priority: "Medium", team: "Team Alpha",   lat: 28.3949, lng: 84.1240 },
-  { id: "INC-2025-0521-04", type: "Crowd",     location: "Dadeldhura",                 time: "2025-05-21T13:10", status: "Monitoring",       priority: "Low",    team: "-",            lat: 29.8412, lng: 80.5385 },
-  { id: "INC-2025-0521-03", type: "Landslide", location: "Sindhupalchok, Chautara",   time: "2025-05-21T11:00", status: "On The Way",       priority: "High",   team: "Team Bravo",   lat: 27.8606, lng: 85.6896 },
-  { id: "INC-2025-0521-02", type: "Accident",  location: "Taplejung",                  time: "2025-05-21T08:40", status: "Rescue Started",   priority: "Medium", team: "Team Charlie", lat: 27.3543, lng: 87.6698 },
-  { id: "INC-2025-0521-01", type: "Fire",      location: "Dolpa, Dunai",               time: "2025-05-21T06:15", status: "Rescue Completed", priority: "Low",    team: "Team Echo",    lat: 28.9940, lng: 82.8990 },
+  {type: "Landslide", location: "Mustang, Jomsom",            time: "2025-05-21T22:10", status: "Rescue Started",   priority: "High",   team: "Team Echo",    lat: 28.6956, lng: 83.4861 },
+  {type: "Accident",  location: "Hetauda, Makwanpur",         time: "2025-05-21T20:30", status: "Rescue Completed", priority: "Medium", team: "Team Foxtrot", lat: 27.4295, lng: 85.0322 },
+  {type: "Fire",      location: "Kailali, Dhangadhi",         time: "2025-05-21T18:00", status: "Assigned",         priority: "High",   team: "Team Delta",   lat: 28.7000, lng: 80.6000 },
+  {type: "Flood",     location: "Lamjung, Besisahar",         time: "2025-05-21T15:30", status: "In Progress",      priority: "Medium", team: "Team Alpha",   lat: 28.3949, lng: 84.1240 },
+  {type: "Crowd",     location: "Dadeldhura",                 time: "2025-05-21T13:10", status: "Monitoring",       priority: "Low",    team: "-",            lat: 29.8412, lng: 80.5385 },
+  {type: "Landslide", location: "Sindhupalchok, Chautara",   time: "2025-05-21T11:00", status: "On The Way",       priority: "High",   team: "Team Bravo",   lat: 27.8606, lng: 85.6896 },
+  {type: "Accident",  location: "Taplejung",                  time: "2025-05-21T08:40", status: "Rescue Started",   priority: "Medium", team: "Team Charlie", lat: 27.3543, lng: 87.6698 },
+  {type: "Fire",      location: "Dolpa, Dunai",               time: "2025-05-21T06:15", status: "Rescue Completed", priority: "Low",    team: "Team Echo",    lat: 28.9940, lng: 82.8990 },
 ];
 
 const PAGE_SIZE = 8;
@@ -67,6 +83,7 @@ export default function Incidents() {
   const mapRef     = useRef(null);
   const leafletMap = useRef(null);
   const markerRefs = useRef({});
+  const [modalImage, setModalImage] = useState(null);
 
   // ── Filtering ──────────────────────────────────────────────
   const filtered = INCIDENTS.filter((i) => {
@@ -256,7 +273,7 @@ export default function Incidents() {
           <table className="w-full">
             <thead className="bg-[#f8fafc] border-b border-gray-100">
               <tr>
-                {["Incident ID","Type","Location","Reported Time","Status","Priority","Assigned Team","Actions"].map(h => (
+                {["Type","Location","Reported Time","Status","Priority","Assigned Team","Actions","Images"].map(h => (
                   <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">{h}</th>
                 ))}
               </tr>
@@ -282,6 +299,16 @@ export default function Incidents() {
                       className="text-xs text-blue-500 hover:text-blue-700 border border-blue-200 px-2 py-0.5 rounded hover:bg-blue-50 transition">
                       Locate
                     </button>
+                  </td>
+                  <td className="px-4 py-3 flex space-x-1">
+                    {inc.images?.map((src, i) => (
+                      <img key={i}
+                        src={src.replace(/^\.\//, "/")}
+                        alt={`img-${i}`}
+                        className="w-12 h-12 object-cover rounded cursor-pointer"
+                        onClick={(e) => { e.stopPropagation(); setModalImage(src.replace(/^\.\//, "/")); }}
+                      />
+                    ))}
                   </td>
                 </tr>
               ))}
@@ -340,6 +367,19 @@ export default function Incidents() {
           </div>
 
           <div ref={mapRef} style={{ height: 420 }} />
+        {modalImage && (
+          <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+            <div className="relative">
+              <button
+                className="absolute top-2 right-2 text-white text-xl"
+                onClick={() => setModalImage(null)}
+              >
+                &times;
+              </button>
+              <img src={modalImage} alt="Full view" className="max-w-full max-h-screen rounded" />
+            </div>
+          </div>
+        )}
         </div>
 
       </div>

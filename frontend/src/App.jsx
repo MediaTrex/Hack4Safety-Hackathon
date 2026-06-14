@@ -36,12 +36,8 @@ export default function App() {
           }
         />
         <Route
-          path="/*"
-          element={
-            <RequireAuth>
-              <MainLayout />
-            </RequireAuth>
-          }
+          path="/:page?"
+          element={<MainLayout />}
         />
       </Routes>
     </AuthProvider>

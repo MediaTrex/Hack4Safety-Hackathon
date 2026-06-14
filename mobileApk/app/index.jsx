@@ -12,23 +12,10 @@ export default function Home() {
     //check for internet , if not then show offline page
     let { isConnected } = useInternet();
 
-    useEffect(() => {
-        if (!isConnected) {
-            router.replace("/offline");
-        } else {
-            router.replace("/");
-        }
-    }, [isConnected]);
-
     let { saveUser, user } = useAuth();
     const [ready, setReady] = useState(false);
 
-    const checkStart = async () => {
-        const hasLaunched = await AsyncStorage.getItem("hasLaunched");
-        if (hasLaunched === null) {
-            router.replace("/getting-started");
-        }
-    };
+   
 
     const handleCitizenLogin = async () => {
         try {
@@ -47,11 +34,35 @@ export default function Home() {
     };
 
     useEffect(() => {
-        checkStart();
-        if (user?.role === "citizen") router.replace("/(citizens)/home");
-        if (user?.role === "rescuers") router.replace("/(rescuers)/dashboard");
-        setReady(true);
-    }, [user]);
+        const init = async () => {
+            // 1. Offline check — bail early
+            if (!isConnected) {
+                router.replace("/offline");
+                return;
+            }
+
+            // 2. First launch check
+            const hasLaunched = await AsyncStorage.getItem("hasLaunched");
+            if (hasLaunched === null) {
+                router.replace("/getting-started");
+                return;
+            }
+
+            // 3. Already logged in — redirect by role
+            if (user?.role === "citizen") {
+                router.replace("/(citizens)/home");
+                return;
+            }
+            if (user?.role === "rescuers") {
+                router.replace("/(rescuers)/dashboard");
+                return;
+            }
+
+            setReady(true); // only show UI if none of the above matched
+        };
+
+        init();
+    }, [isConnected, user]);
 
     if (!ready) return null;
 

@@ -223,8 +223,16 @@ export default function SOSScreen() {
                 details: "",
             });
 
+            setTimeout(() => {
+                Toast.show({
+                    type: "success",
+                    text1: "SOS alert is Assigned",
+                    text2: "Please wait for rescue team to reach you.",
+                })
+            },15000)
+
             // 9. Navigate to tracking screen
-            router.push("/(citizens)/track-your-SOSs");
+            // router.push("/(citizens)/home");
         } catch (err) {
             console.error("SOS send error:", err);
             Toast.show({

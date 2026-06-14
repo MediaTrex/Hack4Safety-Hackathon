@@ -109,11 +109,11 @@ export default function RescueTrackingScreen() {
                 assignId: "6a29583e6933a38e2a705207",
                 sos_location: {
                     type: "Point",
-                    coordinates: [56.0449, 61.8672],
+                    coordinates: [83.4748, 27.6842],
                 },
                 rescue_team_location: {
                     type: "point",
-                    coordinates: [56.0449, 61.8],
+                    coordinates: [83.4747, 27.6840],
                 },
                 status: "victim_safe",
                 taskStatus: "accepted",

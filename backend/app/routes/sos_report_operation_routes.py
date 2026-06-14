@@ -8,8 +8,6 @@ from app.schemas.sos_report_operation_schemas import (
 )
 
 
-
-
 from app.services.sos_report_operation_service import (
 
     create_report,
@@ -28,6 +26,8 @@ router = APIRouter(tags=["sos / report / operation"])
 @router.post("/sos")
 async def create_sos_endpoint(payload: SOSCreateRequest):
     result = await create_sos(payload)
+    print(type(result))
+    print(result)
     return {"message": "SOS created", "operation": result["operation"]}
 
 
